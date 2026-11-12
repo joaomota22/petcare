@@ -42,16 +42,24 @@ class Reminder {
     this.notes = '',
   });
 
-  Reminder copyWith({bool? done}) {
+  Reminder copyWith({
+    int? id,
+    int? petId,
+    String? title,
+    ReminderCategory? category,
+    DateTime? dateTime,
+    bool? done,
+    String? notes,
+  }) {
     return Reminder(
-      id: id,
-      petId: petId,
+      id: id ?? this.id,
+      petId: petId ?? this.petId,
       petName: petName,
-      title: title,
-      category: category,
-      dateTime: dateTime,
+      title: title ?? this.title,
+      category: category ?? this.category,
+      dateTime: dateTime ?? this.dateTime,
       done: done ?? this.done,
-      notes: notes,
+      notes: notes ?? this.notes,
     );
   }
 
