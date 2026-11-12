@@ -5,9 +5,18 @@ import 'app_theme.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'services/auth_service.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await NotificationService.instance.init();
+  } catch (e) {
+    // A app funciona sem notificações; apenas regista o erro.
+    debugPrint('Notificações indisponíveis: $e');
+  }
+
   final loggedIn = await AuthService().isLoggedIn();
   runApp(PetCareApp(isLoggedIn: loggedIn));
 }
