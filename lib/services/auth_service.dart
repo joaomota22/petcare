@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Autenticação SIMULADA para o TP1: contas e sessão ficam guardadas no dispositivo.
-/// Não é segura (a palavra-passe não é cifrada) e será substituída por
-/// Firebase Authentication no TP2.
+/// Autenticação SIMULADA (TP1): contas e sessão ficam guardadas no dispositivo.
+/// A palavra-passe não é cifrada e isto não é seguro. No TP2 será substituído
+/// por Firebase Authentication.
 class AuthService {
   static const _usersKey = 'auth_users';
   static const _tokenKey = 'auth_session_token';

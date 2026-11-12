@@ -1,3 +1,4 @@
+/// Espécies e géneros disponíveis nos formulários.
 const List<String> petSpecies = ['Cão', 'Gato', 'Pássaro', 'Coelho', 'Outro'];
 const List<String> petGenders = ['Macho', 'Fêmea', 'Desconhecido'];
 

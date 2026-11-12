@@ -1,4 +1,4 @@
-/// Validações reutilizadas nos formulários (retornam a mensagem de erro ou null).
+/// Validações dos formulários. Cada método devolve a mensagem de erro, ou null se estiver correto.
 class Validators {
   Validators._();
 
@@ -42,6 +42,7 @@ class Validators {
     return null;
   }
 
+  /// Peso: número positivo (aceita vírgula ou ponto), até 150 kg.
   static String? weight(String? value) {
     final empty = requiredText(value, 'Introduza o peso');
     if (empty != null) return empty;
