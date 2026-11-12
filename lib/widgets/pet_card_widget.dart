@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../app_theme.dart';
 import '../models/pet.dart';
 import '../utils/formatters.dart';
+import 'pet_avatar.dart';
 
 /// Cartão reutilizável que apresenta um animal na lista.
 class PetCardWidget extends StatelessWidget {
@@ -18,56 +20,92 @@ class PetCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final color = speciesColor(pet.species);
     final anos = pet.age == 1 ? 'ano' : 'anos';
 
-    return Card(
-      elevation: 0,
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.shade200),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                PetAvatar(name: pet.name, species: pet.species),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pet.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 17,
+                          color: kInkColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          _Tag(label: pet.breed, color: color),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${pet.age} $anos  •  ${formatWeight(pet.weight)} kg  •  ${pet.gender}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: kMutedColor, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                if (onDelete != null)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    color: Colors.redAccent,
+                    tooltip: 'Remover',
+                    onPressed: onDelete,
+                  )
+                else
+                  const Icon(Icons.chevron_right_rounded, color: kMutedColor),
+              ],
+            ),
+          ),
+        ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(12),
-        onTap: onTap,
-        leading: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: scheme.primaryContainer,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Icon(Icons.pets_rounded, color: scheme.primary),
+    );
+  }
+}
+
+class _Tag extends StatelessWidget {
+  const _Tag({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
-        title: Text(
-          pet.name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('${pet.species} • ${pet.breed}'),
-              const SizedBox(height: 4),
-              Text(
-                '${pet.gender} • ${pet.age} $anos • '
-                '${formatWeight(pet.weight)} kg',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        trailing: onDelete == null
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                tooltip: 'Remover',
-                onPressed: onDelete,
-              ),
       ),
     );
   }
