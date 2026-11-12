@@ -4,12 +4,13 @@ import '../app_theme.dart';
 import '../models/reminder.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
+import '../services/reminder_service.dart';
 import '../utils/formatters.dart';
-import '../widgets/empty_state.dart';
 import '../widgets/reminder_tile.dart';
+import '../widgets/stat_card.dart';
 import 'login_screen.dart';
 
-/// Dashboard: resumo do dia e lembretes de hoje.
+/// Dashboard: resumo do dia, estatísticas e próximos lembretes.
 class DashboardTab extends StatefulWidget {
   const DashboardTab({super.key});
 
@@ -23,6 +24,7 @@ class _DashboardTabState extends State<DashboardTab> {
   bool _loading = true;
   int _petCount = 0;
   List<Reminder> _today = [];
+  List<Reminder> _upcoming = [];
 
   @override
   void initState() {
@@ -38,16 +40,18 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   Future<void> _load() async {
-    final start = startOfDay(DateTime.now());
-    final end = start.add(const Duration(days: 1));
+    final todayStart = startOfDay(DateTime.now());
+    final tomorrow = todayStart.add(const Duration(days: 1));
 
     final pets = await _db.getPets();
-    final today = await _db.getRemindersBetween(start, end);
+    final today = await _db.getRemindersBetween(todayStart, tomorrow);
+    final upcoming = await _db.getUpcomingReminders(tomorrow, limit: 3);
 
     if (!mounted) return;
     setState(() {
       _petCount = pets.length;
       _today = today;
+      _upcoming = upcoming;
       _loading = false;
     });
   }
@@ -63,7 +67,8 @@ class _DashboardTabState extends State<DashboardTab> {
 
   @override
   Widget build(BuildContext context) {
-    final doneCount = _today.where((r) => r.done).length;
+    final now = DateTime.now();
+    final doneToday = _today.where((r) => r.done).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -81,65 +86,90 @@ class _DashboardTabState extends State<DashboardTab> {
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 children: [
-                  _GreetingCard(date: DateTime.now()),
+                  Text(
+                    greetingFor(now),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: kInkColor,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    formatLongDate(now),
+                    style: const TextStyle(color: kMutedColor, fontSize: 15),
+                  ),
+                  const SizedBox(height: 20),
+                  _TodaySummary(total: _today.length, done: doneToday),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                        child: _StatCard(
+                        child: StatCard(
                           value: _petCount,
                           label: 'Animais',
                           icon: Icons.pets_rounded,
+                          color: kPrimaryColor,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _StatCard(
+                        child: StatCard(
                           value: _today.length,
                           label: 'Hoje',
                           icon: Icons.today_rounded,
+                          color: kSecondaryColor,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _StatCard(
-                          value: doneCount,
+                        child: StatCard(
+                          value: doneToday,
                           label: 'Concluídos',
                           icon: Icons.check_circle_outline_rounded,
+                          color: const Color(0xFF2EC4B6),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Lembretes de hoje',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const SizedBox(height: 28),
+                  const _SectionTitle('Hoje'),
                   const SizedBox(height: 12),
-                  if (_today.isEmpty)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const EmptyState(
-                        icon: Icons.event_available_rounded,
-                        title: 'Sem lembretes para hoje',
-                        message:
-                            'Aproveite o dia! Adicione lembretes no separador "Lembretes".',
-                      ),
+                  if (_petCount == 0)
+                    const _HintCard(
+                      icon: Icons.pets_rounded,
+                      text:
+                          'Ainda não tem animais. Registe o primeiro no separador "Animais".',
+                    )
+                  else if (_today.isEmpty)
+                    const _HintCard(
+                      icon: Icons.event_available_rounded,
+                      text: 'Nada agendado para hoje. Aproveite o dia!',
                     )
                   else
                     ..._today.map(
-                      (reminder) => ReminderTile(
-                        reminder: reminder,
+                      (r) => ReminderTile(
+                        reminder: r,
                         showDate: false,
-                        onToggle: (done) =>
-                            _db.setReminderDone(reminder.id!, done),
+                        onToggle: (done) => ReminderService.setDone(r, done),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  const _SectionTitle('Próximos lembretes'),
+                  const SizedBox(height: 12),
+                  if (_upcoming.isEmpty)
+                    const _HintCard(
+                      icon: Icons.notifications_none_rounded,
+                      text: 'Sem lembretes futuros. Crie um no separador "Lembretes".',
+                    )
+                  else
+                    ..._upcoming.map(
+                      (r) => ReminderTile(
+                        reminder: r,
+                        onToggle: (done) => ReminderService.setDone(r, done),
                       ),
                     ),
                 ],
@@ -149,38 +179,65 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 }
 
-class _GreetingCard extends StatelessWidget {
-  const _GreetingCard({required this.date});
+class _TodaySummary extends StatelessWidget {
+  const _TodaySummary({required this.total, required this.done});
 
-  final DateTime date;
+  final int total;
+  final int done;
 
   @override
   Widget build(BuildContext context) {
+    final progress = total == 0 ? 0.0 : done / total;
+    final pending = total - done;
+
+    final title = total == 0
+        ? 'Dia tranquilo'
+        : pending == 0
+            ? 'Tudo concluído!'
+            : pending == 1
+                ? '1 cuidado por fazer'
+                : '$pending cuidados por fazer';
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [kPrimaryColor, Color(0xFF9D94FF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
+        gradient: kBrandGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: kPrimaryColor.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Olá!',
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            formatLongDate(date),
-            style: const TextStyle(color: Colors.white70, fontSize: 15),
+            total == 0
+                ? 'Não há lembretes agendados para hoje.'
+                : '$done de $total lembretes concluídos',
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.85)),
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: Colors.white.withValues(alpha: 0.25),
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -188,39 +245,41 @@ class _GreetingCard extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.value,
-    required this.label,
-    required this.icon,
-  });
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
 
-  final int value;
-  final String label;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        color: kInkColor,
+      ),
+    );
+  }
+}
+
+class _HintCard extends StatelessWidget {
+  const _HintCard({required this.icon, required this.text});
+
   final IconData icon;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
-      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        child: Column(
+        padding: const EdgeInsets.all(18),
+        child: Row(
           children: [
             Icon(icon, color: kPrimaryColor),
-            const SizedBox(height: 6),
-            Text(
-              '$value',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(text, style: const TextStyle(color: kMutedColor, height: 1.4)),
             ),
           ],
         ),
