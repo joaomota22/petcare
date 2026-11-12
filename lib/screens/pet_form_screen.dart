@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app_theme.dart';
 import '../models/pet.dart';
 import '../services/database_service.dart';
 import '../utils/formatters.dart';
@@ -10,6 +11,7 @@ import '../widgets/custom_text_field.dart';
 class PetFormScreen extends StatefulWidget {
   const PetFormScreen({super.key, this.pet});
 
+  /// Se null, cria um animal novo.
   final Pet? pet;
 
   @override
@@ -83,75 +85,60 @@ class _PetFormScreenState extends State<PetFormScreen> {
     Navigator.of(context).pop();
   }
 
-  Future<void> _delete() async {
-    final pet = widget.pet;
-    if (pet?.id == null) return;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Remover ${pet!.name}?'),
-        content: const Text('Esta ação não pode ser desfeita.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Remover'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
-
-    await _db.deletePet(pet!.id!);
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Editar animal' : 'Novo animal'),
-        actions: [
-          if (_isEditing)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              tooltip: 'Remover',
-              onPressed: _delete,
-            ),
-        ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const _FormSection(title: 'Identificação'),
               CustomTextField(
                 controller: _nameCtrl,
                 label: 'Nome do animal',
-                icon: Icons.pets,
+                icon: Icons.pets_rounded,
                 textInputAction: TextInputAction.next,
                 validator: Validators.petName,
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: _species,
-                decoration: const InputDecoration(
-                  labelText: 'Espécie',
-                  prefixIcon: Icon(Icons.category_outlined),
-                ),
-                items: petSpecies
-                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                    .toList(),
-                onChanged: (value) => setState(() => _species = value!),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _species,
+                      decoration: const InputDecoration(
+                        labelText: 'Espécie',
+                        prefixIcon: Icon(Icons.category_outlined),
+                      ),
+                      items: petSpecies
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .toList(),
+                      onChanged: (value) => setState(() => _species = value!),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _gender,
+                      decoration: const InputDecoration(
+                        labelText: 'Género',
+                        prefixIcon: Icon(Icons.male_rounded),
+                      ),
+                      items: petGenders
+                          .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                          .toList(),
+                      onChanged: (value) => setState(() => _gender = value!),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               CustomTextField(
                 controller: _breedCtrl,
                 label: 'Raça',
@@ -159,7 +146,8 @@ class _PetFormScreenState extends State<PetFormScreen> {
                 textInputAction: TextInputAction.next,
                 validator: Validators.breed,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              const _FormSection(title: 'Medidas'),
               Row(
                 children: [
                   Expanded(
@@ -172,7 +160,7 @@ class _PetFormScreenState extends State<PetFormScreen> {
                       validator: Validators.age,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: CustomTextField(
                       controller: _weightCtrl,
@@ -187,27 +175,18 @@ class _PetFormScreenState extends State<PetFormScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: _gender,
-                decoration: const InputDecoration(
-                  labelText: 'Género',
-                  prefixIcon: Icon(Icons.male_outlined),
-                ),
-                items: petGenders
-                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                    .toList(),
-                onChanged: (value) => setState(() => _gender = value!),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              const _FormSection(title: 'Saúde'),
               CustomTextField(
                 controller: _notesCtrl,
                 label: 'Notas / condições de saúde',
+                hint: 'Ex.: alergias, medicação habitual, cirurgias…',
                 icon: Icons.medical_information_outlined,
-                maxLines: 3,
+                maxLines: 4,
+                maxLength: 300,
               ),
-              const SizedBox(height: 32),
-              ElevatedButton(
+              const SizedBox(height: 28),
+              FilledButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
                     ? const SizedBox(
@@ -218,10 +197,32 @@ class _PetFormScreenState extends State<PetFormScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Guardar'),
+                    : Text(_isEditing ? 'Guardar alterações' : 'Guardar animal'),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FormSection extends StatelessWidget {
+  const _FormSection({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(
+          color: kPrimaryColor,
+          fontWeight: FontWeight.w800,
+          fontSize: 12,
+          letterSpacing: 1,
         ),
       ),
     );
