@@ -51,3 +51,9 @@ app.*.map.json
 .env
 *.keystore
 *.jks
+
+# Artefactos compilados e chaves de assinatura (entregues fora do GitHub)
+*.apk
+*.aab
+*.ipa
+key.properties
