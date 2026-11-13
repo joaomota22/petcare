@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
+import '../design/tokens.dart';
 import 'dashboard_tab.dart';
 import 'pets_tab.dart';
 import 'reminders_tab.dart';
@@ -36,13 +37,13 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
           child: Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 80,
+            padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.xs),
             decoration: BoxDecoration(
               color: context.palette.surface,
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(Radii.xxl),
               boxShadow: context.palette.softShadow,
             ),
             child: Row(
@@ -89,41 +90,47 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          color: selected ? context.palette.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
+    final p = context.palette;
+    final tint = selected ? p.primary : p.muted;
+
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: item.label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              selected ? item.activeIcon : item.icon,
-              size: 22,
-              color: selected ? context.palette.onPrimary : context.palette.muted,
-            ),
-            if (selected) ...[
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  item.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: context.palette.onPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                  ),
-                ),
+            // Cápsula do ícone: fundo suave quando ativo, animada.
+            AnimatedContainer(
+              duration: Motion.base,
+              curve: Motion.curve,
+              width: 56,
+              height: 32,
+              decoration: BoxDecoration(
+                color: selected ? p.primarySoft : Colors.transparent,
+                borderRadius: BorderRadius.circular(Radii.l),
               ),
-            ],
+              child: Icon(
+                selected ? item.activeIcon : item.icon,
+                size: 22,
+                color: tint,
+              ),
+            ),
+            const SizedBox(height: Space.xxs),
+            AnimatedDefaultTextStyle(
+              duration: Motion.fast,
+              curve: Motion.curve,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.1,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: tint,
+              ),
+              child: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       ),
