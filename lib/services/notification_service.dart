@@ -35,6 +35,22 @@ class NotificationService {
       iOS: DarwinInitializationSettings(),
     );
     await _plugin.initialize(settings: settings);
+
+    // No Android 8+ as notificações para um canal que não existe são descartadas
+    // em silêncio. O canal tem de ser criado explicitamente.
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(
+          const AndroidNotificationChannel(
+            _channelId,
+            _channelName,
+            description: _channelDescription,
+            importance: Importance.high,
+          ),
+        );
+
     _initialized = true;
   }
 
