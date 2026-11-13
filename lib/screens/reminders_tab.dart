@@ -91,6 +91,7 @@ class _RemindersTabState extends State<RemindersTab> {
     return Scaffold(
       appBar: AppBar(title: const Text('Lembretes')),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: null, // ver pets_tab.dart
         onPressed: () => _openForm(),
         icon: const Icon(Icons.add_alarm_rounded),
         label: const Text('Novo lembrete'),

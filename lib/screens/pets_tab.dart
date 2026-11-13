@@ -112,6 +112,9 @@ class _PetsTabState extends State<PetsTab> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        // Sem heroTag: os separadores ficam todos montados (IndexedStack) e
+        // botões com a mesma tag geram conflitos de Hero ao navegar.
+        heroTag: null,
         onPressed: _openForm,
         icon: const Icon(Icons.add_rounded),
         label: const Text('Adicionar'),
