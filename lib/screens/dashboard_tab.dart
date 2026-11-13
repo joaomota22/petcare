@@ -151,28 +151,28 @@ class _Header extends StatelessWidget {
             children: [
               Text(
                 '${greetingFor(now)}!',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w900,
-                  color: kInkColor,
+                  color: context.palette.ink,
                   letterSpacing: -0.8,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 formatLongDate(now),
-                style: const TextStyle(color: kMutedColor, fontSize: 14),
+                style: TextStyle(color: context.palette.muted, fontSize: 14),
               ),
             ],
           ),
         ),
         Material(
-          color: Colors.white,
+          color: context.palette.surface,
           shape: const CircleBorder(),
           elevation: 2,
           shadowColor: const Color(0x1A2A2766),
           child: IconButton(
-            icon: const Icon(Icons.logout_rounded, color: kPrimaryColor),
+            icon: Icon(Icons.logout_rounded, color: context.palette.primary),
             tooltip: 'Sair',
             onPressed: onLogout,
           ),
@@ -211,9 +211,9 @@ class _HeroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: kBrandGradient,
+        gradient: context.palette.brandGradient,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: kSoftShadow,
+        boxShadow: context.palette.softShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +266,7 @@ class _HeroCard extends StatelessWidget {
                     value: progress,
                     minHeight: 8,
                     backgroundColor: Colors.white.withValues(alpha: 0.2),
-                    color: kTealColor,
+                    color: context.palette.success,
                   ),
                 ),
               ),
@@ -302,10 +302,10 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w800,
-        color: kInkColor,
+        color: context.palette.ink,
         letterSpacing: -0.4,
       ),
     );
@@ -329,16 +329,16 @@ class _HintCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: kSurfaceTint,
+                color: context.palette.primarySoft,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(icon, color: kPrimaryColor),
+              child: Icon(icon, color: context.palette.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(color: kMutedColor, height: 1.4),
+                style: TextStyle(color: context.palette.muted, height: 1.4),
               ),
             ),
           ],

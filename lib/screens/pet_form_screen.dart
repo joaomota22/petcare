@@ -209,8 +209,8 @@ class _FormSection extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(
         title.toUpperCase(),
-        style: const TextStyle(
-          color: kPrimaryColor,
+        style: TextStyle(
+          color: context.palette.primary,
           fontWeight: FontWeight.w800,
           fontSize: 12,
           letterSpacing: 1,

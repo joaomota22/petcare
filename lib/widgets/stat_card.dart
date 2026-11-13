@@ -37,15 +37,15 @@ class StatCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               '$value',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
-                color: kInkColor,
+                color: context.palette.ink,
               ),
             ),
             Text(
               label,
-              style: const TextStyle(color: kMutedColor, fontSize: 12.5),
+              style: TextStyle(color: context.palette.muted, fontSize: 12.5),
             ),
           ],
         ),

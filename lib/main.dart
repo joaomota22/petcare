@@ -41,7 +41,9 @@ class PetCareApp extends StatelessWidget {
     return MaterialApp(
       title: 'PetCare 360',
       debugShowCheckedModeBanner: false,
-      theme: buildAppTheme(),
+      theme: buildAppTheme(dark: false),
+      darkTheme: buildAppTheme(dark: true),
+      themeMode: ThemeMode.system,
       locale: const Locale('pt', 'PT'),
       supportedLocales: const [Locale('pt', 'PT')],
       localizationsDelegates: const [

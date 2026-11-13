@@ -31,18 +31,18 @@ class EmptyState extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: kPrimaryColor.withValues(alpha: 0.1),
+                color: context.palette.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 56, color: kPrimaryColor),
+              child: Icon(icon, size: 56, color: context.palette.primary),
             ),
             const SizedBox(height: 20),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
-                color: kInkColor,
+                color: context.palette.ink,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -50,7 +50,7 @@ class EmptyState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: kMutedColor, height: 1.4),
+              style: TextStyle(color: context.palette.muted, height: 1.4),
             ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 24),

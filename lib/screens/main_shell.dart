@@ -41,9 +41,9 @@ class _MainShellState extends State<MainShell> {
             height: 72,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.palette.surface,
               borderRadius: BorderRadius.circular(28),
-              boxShadow: kSoftShadow,
+              boxShadow: context.palette.softShadow,
             ),
             child: Row(
               children: [
@@ -98,7 +98,7 @@ class _NavButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: selected ? kPrimaryColor : Colors.transparent,
+          color: selected ? context.palette.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -107,7 +107,7 @@ class _NavButton extends StatelessWidget {
             Icon(
               selected ? item.activeIcon : item.icon,
               size: 22,
-              color: selected ? Colors.white : kMutedColor,
+              color: selected ? context.palette.onPrimary : context.palette.muted,
             ),
             if (selected) ...[
               const SizedBox(width: 6),
@@ -116,8 +116,8 @@ class _NavButton extends StatelessWidget {
                   item.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.palette.onPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
                   ),

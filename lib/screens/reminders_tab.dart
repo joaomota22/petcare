@@ -195,13 +195,13 @@ class _FilterChip extends StatelessWidget {
         label: Text(label),
         selected: selected,
         onSelected: (_) => onTap(),
-        selectedColor: kPrimaryColor,
-        backgroundColor: Colors.white,
+        selectedColor: context.palette.primary,
+        backgroundColor: context.palette.surface,
         side: BorderSide(
-          color: selected ? kPrimaryColor : const Color(0xFFE3E1EE),
+          color: selected ? context.palette.primary : const Color(0xFFE3E1EE),
         ),
         labelStyle: TextStyle(
-          color: selected ? Colors.white : kInkColor,
+          color: selected ? context.palette.onPrimary : context.palette.ink,
           fontWeight: FontWeight.w700,
         ),
         showCheckmark: false,

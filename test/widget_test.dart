@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:petcare/app_theme.dart';
 import 'package:petcare/main.dart';
 import 'package:petcare/screens/pet_form_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +30,7 @@ void main() {
   });
 
   testWidgets('formulário de animal valida nome vazio e peso não positivo', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: PetFormScreen()));
+    await tester.pumpWidget(MaterialApp(theme: buildAppTheme(dark: false), home: PetFormScreen()));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.widgetWithText(TextFormField, 'Peso (kg)'), '0');

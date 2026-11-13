@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(gradient: kBrandGradient),
+        decoration: BoxDecoration(gradient: context.palette.brandGradient),
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -101,10 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 _isLoginMode ? 'Entrar' : 'Criar conta',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
-                                  color: kInkColor,
+                                  color: context.palette.ink,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -112,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _isLoginMode
                                     ? 'Bem-vindo de volta! Continue a cuidar dos seus animais.'
                                     : 'Registe-se em segundos e comece a organizar os cuidados.',
-                                style: const TextStyle(
-                                  color: kMutedColor,
+                                style: TextStyle(
+                                  color: context.palette.muted,
                                   height: 1.4,
                                 ),
                               ),
@@ -156,8 +156,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _isLoginMode
                                       ? 'Não tem conta? Registe-se aqui'
                                       : 'Já tem conta? Entre aqui',
-                                  style: const TextStyle(
-                                    color: kPrimaryColor,
+                                  style: TextStyle(
+                                    color: context.palette.primary,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),

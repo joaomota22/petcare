@@ -296,7 +296,7 @@ class _PickerField extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: kInkColor),
+          style: TextStyle(fontWeight: FontWeight.w600, color: context.palette.ink),
         ),
       ),
     );

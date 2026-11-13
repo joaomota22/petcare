@@ -18,7 +18,7 @@ class FormScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: context.palette.primary,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -54,8 +54,8 @@ class FormScaffold extends StatelessWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: kBackgroundColor,
+                decoration: BoxDecoration(
+                  color: context.palette.background,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                 ),
                 child: ClipRRect(

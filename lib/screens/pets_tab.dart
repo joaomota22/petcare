@@ -96,13 +96,13 @@ class _PetsTabState extends State<PetsTab> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withValues(alpha: 0.12),
+                    color: context.palette.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     '${pets.length}',
-                    style: const TextStyle(
-                      color: kPrimaryColor,
+                    style: TextStyle(
+                      color: context.palette.primary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),

@@ -214,13 +214,13 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           const SizedBox(height: 24),
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Próximos lembretes',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: kInkColor,
+                    color: context.palette.ink,
                   ),
                 ),
               ),
@@ -238,7 +238,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 padding: const EdgeInsets.all(18),
                 child: Text(
                   'Sem lembretes pendentes para ${pet.name}.',
-                  style: const TextStyle(color: kMutedColor),
+                  style: TextStyle(color: context.palette.muted),
                 ),
               ),
             )
@@ -265,7 +265,7 @@ class _ProfileHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: kBrandGradient,
+        gradient: context.palette.brandGradient,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
@@ -319,16 +319,16 @@ class _InfoTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
         child: Column(
           children: [
-            Icon(icon, color: kPrimaryColor),
+            Icon(icon, color: context.palette.primary),
             const SizedBox(height: 6),
             Text(
               value,
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w800, color: kInkColor),
+              style: TextStyle(fontWeight: FontWeight.w800, color: context.palette.ink),
             ),
-            Text(label, style: const TextStyle(color: kMutedColor, fontSize: 12)),
+            Text(label, style: TextStyle(color: context.palette.muted, fontSize: 12)),
           ],
         ),
       ),
@@ -369,11 +369,11 @@ class _WeightCard extends StatelessWidget {
             SizedBox(
               height: 200,
               child: weights.length < 2
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         'Registe pelo menos dois pesos para ver o gráfico.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: kMutedColor),
+                        style: TextStyle(color: context.palette.muted),
                       ),
                     )
                   : _WeightChart(weights: weights),
@@ -415,7 +415,7 @@ class _WeightChart extends StatelessWidget {
               reservedSize: 40,
               getTitlesWidget: (value, meta) => Text(
                 formatWeight(value),
-                style: const TextStyle(color: kMutedColor, fontSize: 11),
+                style: TextStyle(color: context.palette.muted, fontSize: 11),
               ),
             ),
           ),
@@ -432,7 +432,7 @@ class _WeightChart extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     formatDate(d).substring(0, 5),
-                    style: const TextStyle(color: kMutedColor, fontSize: 10),
+                    style: TextStyle(color: context.palette.muted, fontSize: 10),
                   ),
                 );
               },
@@ -443,12 +443,12 @@ class _WeightChart extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: kPrimaryColor,
+            color: context.palette.primary,
             barWidth: 3,
             dotData: const FlDotData(show: true),
             belowBarData: BarAreaData(
               show: true,
-              color: kPrimaryColor.withValues(alpha: 0.12),
+              color: context.palette.primary.withValues(alpha: 0.12),
             ),
           ),
         ],
@@ -470,12 +470,12 @@ class _NotesCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.medical_information_outlined, color: kSecondaryColor),
+            Icon(Icons.medical_information_outlined, color: context.palette.accent),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 notes,
-                style: const TextStyle(color: kInkColor, height: 1.4),
+                style: TextStyle(color: context.palette.ink, height: 1.4),
               ),
             ),
           ],
