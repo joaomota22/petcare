@@ -28,14 +28,14 @@ class FormScaffold extends StatelessWidget {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                    icon: Icon(Icons.arrow_back_rounded, color: context.palette.onPrimary),
                     onPressed: () => Navigator.of(context).maybePop(),
                   ),
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.palette.onPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.4,
@@ -44,7 +44,7 @@ class FormScaffold extends StatelessWidget {
                   ),
                   ...actions.map(
                     (a) => IconTheme.merge(
-                      data: const IconThemeData(color: Colors.white),
+                      data: IconThemeData(color: context.palette.onPrimary),
                       child: a,
                     ),
                   ),
