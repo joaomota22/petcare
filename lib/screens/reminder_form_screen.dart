@@ -8,6 +8,7 @@ import '../services/notification_service.dart';
 import '../services/reminder_service.dart';
 import '../utils/formatters.dart';
 import '../utils/validators.dart';
+import '../widgets/form_scaffold.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/empty_state.dart';
 
@@ -147,11 +148,9 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Editar lembrete' : 'Novo lembrete'),
-      ),
-      body: _buildBody(),
+    return FormScaffold(
+      title: _isEditing ? 'Editar lembrete' : 'Novo lembrete',
+      child: _buildBody(),
     );
   }
 

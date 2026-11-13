@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
-// Paleta: índigo (principal), coral (destaque), teal (sucesso) sobre fundo frio.
-const Color kPrimaryColor = Color(0xFF4F46E5);
-const Color kPrimaryLight = Color(0xFF8B85F7);
-const Color kSecondaryColor = Color(0xFFFB7185); // coral (destaque)
-const Color kTealColor = Color(0xFF14B8A6); // sucesso / concluído
-const Color kInkColor = Color(0xFF0F172A);
-const Color kMutedColor = Color(0xFF64748B);
-const Color kBackgroundColor = Color(0xFFF3F5FB);
-const Color kBorderColor = Color(0xFFE2E8F0);
+// Paleta inspirada em UI moderna: índigo escuro (principal) sobre fundo lavanda.
+const Color kPrimaryColor = Color(0xFF3D3A8C);
+const Color kPrimaryDark = Color(0xFF2A2766);
+const Color kPrimaryLight = Color(0xFF6F6BC4);
+const Color kSecondaryColor = Color(0xFFFF7A8A); // coral (alertas e remoção)
+const Color kTealColor = Color(0xFF2EC4B6); // sucesso / concluído
+const Color kInkColor = Color(0xFF1B1A3A);
+const Color kMutedColor = Color(0xFF8E90A8);
+const Color kBackgroundColor = Color(0xFFEEF1FB);
+const Color kBorderColor = Color(0xFFE4E7F3);
+const Color kSurfaceTint = Color(0xFFE6E7F8); // fundo suave de ícones
 
 const LinearGradient kBrandGradient = LinearGradient(
-  colors: [Color(0xFF4F46E5), Color(0xFF7C3AED), Color(0xFFA855F7)],
+  colors: [Color(0xFF4A47A3), Color(0xFF2A2766)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
 
 /// Sombra suave usada nos cartões e destaques.
 const List<BoxShadow> kSoftShadow = [
-  BoxShadow(color: Color(0x140F172A), blurRadius: 18, offset: Offset(0, 6)),
-  BoxShadow(color: Color(0x080F172A), blurRadius: 4, offset: Offset(0, 1)),
+  BoxShadow(color: Color(0x1A2A2766), blurRadius: 24, offset: Offset(0, 10)),
+  BoxShadow(color: Color(0x0D2A2766), blurRadius: 4, offset: Offset(0, 2)),
 ];
 
 ThemeData buildAppTheme() {
@@ -32,7 +34,7 @@ ThemeData buildAppTheme() {
     onSurface: kInkColor,
   );
 
-  final fieldRadius = BorderRadius.circular(14);
+  final fieldRadius = BorderRadius.circular(18);
 
   return ThemeData(
     useMaterial3: true,
@@ -56,11 +58,11 @@ ThemeData buildAppTheme() {
     cardTheme: CardThemeData(
       color: Colors.white,
       surfaceTintColor: Colors.transparent,
-      shadowColor: const Color(0x140F172A),
-      elevation: 2,
+      shadowColor: const Color(0x1A2A2766),
+      elevation: 3,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -74,33 +76,33 @@ ThemeData buildAppTheme() {
       prefixIconColor: kMutedColor,
       border: OutlineInputBorder(
         borderRadius: fieldRadius,
-        borderSide: const BorderSide(color: kBorderColor),
+        borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: fieldRadius,
-        borderSide: const BorderSide(color: kBorderColor),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: fieldRadius,
-        borderSide: const BorderSide(color: kPrimaryColor, width: 2),
+        borderSide: const BorderSide(color: kPrimaryColor, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: fieldRadius,
-        borderSide: const BorderSide(color: Color(0xFFF43F5E)),
+        borderSide: const BorderSide(color: kSecondaryColor),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: fieldRadius,
-        borderSide: const BorderSide(color: Color(0xFFF43F5E), width: 2),
+        borderSide: const BorderSide(color: kSecondaryColor, width: 1.5),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
-        disabledBackgroundColor: kPrimaryColor.withValues(alpha: 0.4),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        disabledBackgroundColor: kPrimaryColor.withValues(alpha: 0.35),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     ),
@@ -108,8 +110,8 @@ ThemeData buildAppTheme() {
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         elevation: 0,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
@@ -117,19 +119,19 @@ ThemeData buildAppTheme() {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: kPrimaryColor,
       foregroundColor: Colors.white,
-      elevation: 3,
+      elevation: 4,
       extendedTextStyle: const TextStyle(fontWeight: FontWeight.w700),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
-      shadowColor: const Color(0x140F172A),
+      shadowColor: const Color(0x1A2A2766),
       elevation: 8,
-      height: 72,
-      indicatorColor: kPrimaryColor.withValues(alpha: 0.12),
+      height: 74,
+      indicatorColor: kPrimaryColor,
       indicatorShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
       ),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
@@ -143,7 +145,7 @@ ThemeData buildAppTheme() {
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return IconThemeData(
-          color: selected ? kPrimaryColor : kMutedColor,
+          color: selected ? Colors.white : kMutedColor,
           size: 24,
         );
       }),
@@ -151,13 +153,13 @@ ThemeData buildAppTheme() {
     dialogTheme: DialogThemeData(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: kInkColor,
+      backgroundColor: kPrimaryDark,
       contentTextStyle: const TextStyle(color: Colors.white),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     chipTheme: ChipThemeData(
       side: const BorderSide(color: kBorderColor),
@@ -172,9 +174,9 @@ Color speciesColor(String species) {
     case 'Cão':
       return const Color(0xFFF59E0B); // âmbar
     case 'Gato':
-      return const Color(0xFF6366F1); // índigo
+      return const Color(0xFF6F6BC4); // índigo claro
     case 'Pássaro':
-      return const Color(0xFF14B8A6); // teal
+      return const Color(0xFF2EC4B6); // teal
     case 'Coelho':
       return const Color(0xFFEC4899); // rosa
     default:

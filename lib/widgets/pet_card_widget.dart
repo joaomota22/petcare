@@ -5,7 +5,7 @@ import '../models/pet.dart';
 import '../utils/formatters.dart';
 import 'pet_avatar.dart';
 
-/// Cartão reutilizável que apresenta um animal na lista.
+/// Cartão de animal: avatar, nome, etiqueta da raça e dados rápidos.
 class PetCardWidget extends StatelessWidget {
   const PetCardWidget({
     super.key,
@@ -24,16 +24,16 @@ class PetCardWidget extends StatelessWidget {
     final anos = pet.age == 1 ? 'ano' : 'anos';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 14),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                PetAvatar(name: pet.name, species: pet.species),
+                PetAvatar(name: pet.name, species: pet.species, size: 58),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -49,18 +49,14 @@ class PetCardWidget extends StatelessWidget {
                           color: kInkColor,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          _Tag(label: pet.breed, color: color),
-                        ],
-                      ),
                       const SizedBox(height: 6),
+                      _Tag(label: pet.breed, color: color),
+                      const SizedBox(height: 8),
                       Text(
                         '${pet.age} $anos  •  ${formatWeight(pet.weight)} kg  •  ${pet.gender}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: kMutedColor, fontSize: 13),
+                        style: const TextStyle(color: kMutedColor, fontSize: 12.5),
                       ),
                     ],
                   ),
@@ -68,12 +64,23 @@ class PetCardWidget extends StatelessWidget {
                 if (onDelete != null)
                   IconButton(
                     icon: const Icon(Icons.delete_outline_rounded),
-                    color: Colors.redAccent,
+                    color: kSecondaryColor,
                     tooltip: 'Remover',
                     onPressed: onDelete,
                   )
                 else
-                  const Icon(Icons.chevron_right_rounded, color: kMutedColor),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: kSurfaceTint,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.chevron_right_rounded,
+                      color: kPrimaryColor,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -92,9 +99,9 @@ class _Tag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: color.withValues(alpha: 0.13),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(

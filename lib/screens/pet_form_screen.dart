@@ -5,6 +5,7 @@ import '../models/pet.dart';
 import '../services/database_service.dart';
 import '../utils/formatters.dart';
 import '../utils/validators.dart';
+import '../widgets/form_scaffold.dart';
 import '../widgets/custom_text_field.dart';
 
 /// Adicionar ou editar um animal (com validações).
@@ -87,11 +88,9 @@ class _PetFormScreenState extends State<PetFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Editar animal' : 'Novo animal'),
-      ),
-      body: SingleChildScrollView(
+    return FormScaffold(
+      title: _isEditing ? 'Editar animal' : 'Novo animal',
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         child: Form(
           key: _formKey,
