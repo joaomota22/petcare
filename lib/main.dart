@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import 'app_theme.dart';
 import 'screens/login_screen.dart';
@@ -12,9 +13,15 @@ import 'services/notification_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // O sqflite só funciona em Android, iOS e macOS. No Windows e Linux usa-se
-  // o mesmo SQLite através do sqflite_common_ffi.
-  if (defaultTargetPlatform == TargetPlatform.windows ||
+  // O sqflite só funciona em Android, iOS e macOS. Nas outras plataformas
+  // usa-se o mesmo SQLite por outra via:
+  // - Windows/Linux: sqflite_common_ffi (SQLite nativo)
+  // - Web (Chrome/Edge): sqflite_common_ffi_web (SQLite em WebAssembly)
+  if (kIsWeb) {
+    // Sem web worker: o worker partilhado não conseguia carregar o sqlite3.wasm.
+    // A app usa uma só aba, por isso executar na própria página é suficiente.
+    databaseFactory = databaseFactoryFfiWebNoWebWorker;
+  } else if (defaultTargetPlatform == TargetPlatform.windows ||
       defaultTargetPlatform == TargetPlatform.linux) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
