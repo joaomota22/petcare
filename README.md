@@ -1,6 +1,6 @@
-# petcare
+# PetCare 360
 
-A new Flutter project.
+Aplicação móvel em Flutter para donos de animais: registo dos animais, histórico de peso, lembretes de cuidados e notificações.
 
 ## Getting Started
 
