@@ -107,36 +107,28 @@ class _PetFormScreenState extends State<PetFormScreen> {
                 validator: Validators.petName,
               ),
               const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _species,
-                      decoration: const InputDecoration(
-                        labelText: 'Espécie',
-                        prefixIcon: Icon(Icons.category_outlined),
-                      ),
-                      items: petSpecies
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                          .toList(),
-                      onChanged: (value) => setState(() => _species = value!),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _gender,
-                      decoration: const InputDecoration(
-                        labelText: 'Género',
-                        prefixIcon: Icon(Icons.male_rounded),
-                      ),
-                      items: petGenders
-                          .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                          .toList(),
-                      onChanged: (value) => setState(() => _gender = value!),
-                    ),
-                  ),
-                ],
+              DropdownButtonFormField<String>(
+                initialValue: _species,
+                decoration: const InputDecoration(
+                  labelText: 'Espécie',
+                  prefixIcon: Icon(Icons.category_outlined),
+                ),
+                items: petSpecies
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (value) => setState(() => _species = value!),
+              ),
+              const SizedBox(height: 14),
+              DropdownButtonFormField<String>(
+                initialValue: _gender,
+                decoration: const InputDecoration(
+                  labelText: 'Género',
+                  prefixIcon: Icon(Icons.male_rounded),
+                ),
+                items: petGenders
+                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                    .toList(),
+                onChanged: (value) => setState(() => _gender = value!),
               ),
               const SizedBox(height: 14),
               CustomTextField(
