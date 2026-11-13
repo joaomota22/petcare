@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 /// Tipos de lembrete. O nome (enum) é o que se guarda na base de dados.
 enum ReminderCategory {
-  vacina('Vacina', Icons.vaccines_outlined, Color(0xFF6C63FF)),
-  banho('Banho', Icons.shower_outlined, Color(0xFF26A7DE)),
-  desparasitacao('Desparasitação', Icons.bug_report_outlined, Color(0xFF8BC34A)),
-  alimentacao('Alimentação', Icons.restaurant_rounded, Color(0xFFFF9800)),
-  passeio('Passeio', Icons.directions_walk_rounded, Color(0xFF2EC4B6)),
-  medicacao('Medicação', Icons.medication_rounded, Color(0xFFFF6584)),
-  outro('Outro', Icons.event_note_rounded, Color(0xFF9E9E9E));
+  vacina('Vacina', Icons.vaccines_outlined, Color(0xFF6366F1)),
+  banho('Banho', Icons.shower_outlined, Color(0xFF0EA5E9)),
+  desparasitacao('Desparasitação', Icons.bug_report_outlined, Color(0xFF84CC16)),
+  alimentacao('Alimentação', Icons.restaurant_rounded, Color(0xFFF59E0B)),
+  passeio('Passeio', Icons.directions_walk_rounded, Color(0xFF14B8A6)),
+  medicacao('Medicação', Icons.medication_rounded, Color(0xFFF43F5E)),
+  outro('Outro', Icons.event_note_rounded, Color(0xFF64748B));
 
   const ReminderCategory(this.label, this.icon, this.color);
 

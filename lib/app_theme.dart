@@ -1,77 +1,96 @@
 import 'package:flutter/material.dart';
 
-const Color kPrimaryColor = Color(0xFF6C63FF);
-const Color kPrimaryLight = Color(0xFF9D94FF);
-const Color kSecondaryColor = Color(0xFFFF6584);
-const Color kInkColor = Color(0xFF1F1D2B);
-const Color kMutedColor = Color(0xFF8A8AA3);
-const Color kBackgroundColor = Color(0xFFF5F4FA);
+// Paleta: índigo (principal), coral (destaque), teal (sucesso) sobre fundo frio.
+const Color kPrimaryColor = Color(0xFF4F46E5);
+const Color kPrimaryLight = Color(0xFF8B85F7);
+const Color kSecondaryColor = Color(0xFFFB7185); // coral (destaque)
+const Color kTealColor = Color(0xFF14B8A6); // sucesso / concluído
+const Color kInkColor = Color(0xFF0F172A);
+const Color kMutedColor = Color(0xFF64748B);
+const Color kBackgroundColor = Color(0xFFF3F5FB);
+const Color kBorderColor = Color(0xFFE2E8F0);
 
 const LinearGradient kBrandGradient = LinearGradient(
-  colors: [kPrimaryColor, kPrimaryLight],
+  colors: [Color(0xFF4F46E5), Color(0xFF7C3AED), Color(0xFFA855F7)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+
+/// Sombra suave usada nos cartões e destaques.
+const List<BoxShadow> kSoftShadow = [
+  BoxShadow(color: Color(0x140F172A), blurRadius: 18, offset: Offset(0, 6)),
+  BoxShadow(color: Color(0x080F172A), blurRadius: 4, offset: Offset(0, 1)),
+];
 
 ThemeData buildAppTheme() {
   final scheme = ColorScheme.fromSeed(
     seedColor: kPrimaryColor,
     primary: kPrimaryColor,
     secondary: kSecondaryColor,
+    tertiary: kTealColor,
     surface: Colors.white,
+    onSurface: kInkColor,
   );
 
-  final borderRadius = BorderRadius.circular(16);
+  final fieldRadius = BorderRadius.circular(14);
 
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: kBackgroundColor,
+    splashFactory: InkSparkle.splashFactory,
     appBarTheme: const AppBarTheme(
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       foregroundColor: kInkColor,
       titleTextStyle: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.w800,
         color: kInkColor,
-        letterSpacing: -0.3,
+        letterSpacing: -0.4,
       ),
     ),
     cardTheme: CardThemeData(
       color: Colors.white,
-      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: const Color(0x140F172A),
+      elevation: 2,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: Color(0xFFEDEBF5)),
+        borderRadius: BorderRadius.circular(22),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
       labelStyle: const TextStyle(color: kMutedColor),
+      floatingLabelStyle: const TextStyle(
+        color: kPrimaryColor,
+        fontWeight: FontWeight.w600,
+      ),
+      prefixIconColor: kMutedColor,
       border: OutlineInputBorder(
-        borderRadius: borderRadius,
-        borderSide: const BorderSide(color: Color(0xFFE3E1EE)),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: kBorderColor),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
-        borderSide: const BorderSide(color: Color(0xFFE3E1EE)),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: kBorderColor),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
+        borderRadius: fieldRadius,
         borderSide: const BorderSide(color: kPrimaryColor, width: 2),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
-        borderSide: const BorderSide(color: Colors.redAccent),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: Color(0xFFF43F5E)),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
-        borderSide: const BorderSide(color: Colors.redAccent, width: 2),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: Color(0xFFF43F5E), width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
     ),
@@ -79,8 +98,9 @@ ThemeData buildAppTheme() {
       style: FilledButton.styleFrom(
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
+        disabledBackgroundColor: kPrimaryColor.withValues(alpha: 0.4),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     ),
@@ -89,47 +109,75 @@ ThemeData buildAppTheme() {
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 0,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: kPrimaryColor,
       foregroundColor: Colors.white,
-      elevation: 2,
+      elevation: 3,
+      extendedTextStyle: const TextStyle(fontWeight: FontWeight.w700),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.white,
-      selectedItemColor: kPrimaryColor,
-      unselectedItemColor: kMutedColor,
-      elevation: 0,
-      type: BottomNavigationBarType.fixed,
-      selectedLabelStyle: TextStyle(fontWeight: FontWeight.w700),
+      surfaceTintColor: Colors.transparent,
+      shadowColor: const Color(0x140F172A),
+      elevation: 8,
+      height: 72,
+      indicatorColor: kPrimaryColor.withValues(alpha: 0.12),
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return TextStyle(
+          fontSize: 12,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          color: selected ? kPrimaryColor : kMutedColor,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          color: selected ? kPrimaryColor : kMutedColor,
+          size: 24,
+        );
+      }),
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      backgroundColor: kInkColor,
+      contentTextStyle: const TextStyle(color: Colors.white),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    ),
+    chipTheme: ChipThemeData(
+      side: const BorderSide(color: kBorderColor),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
     ),
   );
 }
 
-/// Cor associada a cada espécie (usada nos avatares).
+/// Cor associada a cada espécie (usada nos avatares e etiquetas).
 Color speciesColor(String species) {
   switch (species) {
     case 'Cão':
-      return const Color(0xFFFF9800);
+      return const Color(0xFFF59E0B); // âmbar
     case 'Gato':
-      return const Color(0xFF6C63FF);
+      return const Color(0xFF6366F1); // índigo
     case 'Pássaro':
-      return const Color(0xFF2EC4B6);
+      return const Color(0xFF14B8A6); // teal
     case 'Coelho':
-      return const Color(0xFFFF6584);
+      return const Color(0xFFEC4899); // rosa
     default:
-      return const Color(0xFF8A8AA3);
+      return kMutedColor;
   }
 }

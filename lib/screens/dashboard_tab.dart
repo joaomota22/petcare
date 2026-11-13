@@ -130,7 +130,7 @@ class _DashboardTabState extends State<DashboardTab> {
                           value: doneToday,
                           label: 'Concluídos',
                           icon: Icons.check_circle_outline_rounded,
-                          color: const Color(0xFF2EC4B6),
+                          color: kTealColor,
                         ),
                       ),
                     ],
