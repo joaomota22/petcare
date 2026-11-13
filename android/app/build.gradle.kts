@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.example.petcare"
-    compileSdk = flutter.compileSdkVersion
+    // Dependências recentes (androidx.core 1.19) exigem compilar contra a API 37.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
