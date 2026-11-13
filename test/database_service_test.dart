@@ -180,6 +180,18 @@ void main() {
     });
   });
 
+  test('caminho por defeito (o que a app usa) abre, grava e lê', () async {
+    final real = DatabaseService(); // sem databasePath: usa getDatabasesPath()
+    try {
+      final id = await real.insertPet(_pet('Caminho real'));
+      expect((await real.getPets()).map((p) => p.name), contains('Caminho real'));
+      await real.deletePet(id);
+      expect(await real.getPets(), isEmpty);
+    } finally {
+      await real.close();
+    }
+  });
+
   test('cada escrita notifica os ecrãs (DatabaseService.changes)', () async {
     final before = DatabaseService.changes.value;
 
