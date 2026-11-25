@@ -9,7 +9,7 @@ import '../utils/formatters.dart';
 import '../widgets/reminder_tile.dart';
 import 'login_screen.dart';
 
-/// Dashboard: saudação, resumo do dia e próximos lembretes.
+/// Dashboard: data de hoje, resumo do dia e próximos lembretes.
 class DashboardTab extends StatefulWidget {
   const DashboardTab({super.key});
 
@@ -78,46 +78,40 @@ class _DashboardTabState extends State<DashboardTab> {
             : RefreshIndicator(
                 onRefresh: _load,
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
+                  padding: const EdgeInsets.fromLTRB(Space.m, Space.m, Space.m, Space.xl),
                   children: [
-                    _Header(onLogout: _logout),
-                    const SizedBox(height: 24),
-                    _HeroCard(
-                      done: doneToday,
-                      total: total,
-                      pets: _petCount,
-                      date: now,
-                    ),
-                    const SizedBox(height: 28),
+                    _Header(date: now, onLogout: _logout),
+                    const SizedBox(height: Space.l),
+                    _TodaySummary(done: doneToday, total: total, pets: _petCount),
+                    const SizedBox(height: Space.xl),
                     const _SectionTitle('Hoje'),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: Space.s),
                     if (_petCount == 0)
                       const _HintCard(
-                        icon: Icons.pets_rounded,
+                        icon: Icons.pets_outlined,
                         text:
-                            'Ainda não tem animais. Registe o primeiro no separador "Animais".',
+                            'Ainda não tem animais. Registe o primeiro no separador Animais.',
                       )
                     else if (_today.isEmpty)
                       const _HintCard(
-                        icon: Icons.event_available_rounded,
-                        text: 'Nada agendado para hoje. Aproveite o dia!',
+                        icon: Icons.event_available_outlined,
+                        text: 'Nada agendado para hoje',
                       )
                     else
                       ..._today.map(
                         (r) => ReminderTile(
                           reminder: r,
-                          showDate: false,
                           onToggle: (done) => ReminderService.setDone(r, done),
                         ),
                       ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: Space.l),
                     const _SectionTitle('Próximos lembretes'),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: Space.s),
                     if (_upcoming.isEmpty)
                       const _HintCard(
-                        icon: Icons.notifications_none_rounded,
+                        icon: Icons.notifications_none,
                         text:
-                            'Sem lembretes futuros. Crie um no separador "Lembretes".',
+                            'Sem lembretes futuros. Crie um no separador Lembretes.',
                       )
                     else
                       ..._upcoming.map(
@@ -134,14 +128,16 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 }
 
+/// Cabeçalho: o dia de hoje e a saída da conta.
 class _Header extends StatelessWidget {
-  const _Header({required this.onLogout});
+  const _Header({required this.date, required this.onLogout});
 
+  final DateTime date;
   final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final p = context.palette;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -150,54 +146,42 @@ class _Header extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${greetingFor(now)}!',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w900,
-                  color: context.palette.ink,
-                  letterSpacing: -0.8,
-                ),
+                formatWeekday(date),
+                style: TextStyle(color: p.muted, fontSize: 14),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: Space.xxs),
               Text(
-                formatLongDate(now),
-                style: TextStyle(color: context.palette.muted, fontSize: 14),
+                formatDayMonth(date),
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ],
           ),
         ),
-        Material(
-          color: context.palette.surface,
-          shape: const CircleBorder(),
-          elevation: 2,
-          shadowColor: const Color(0x1A2A2766),
-          child: IconButton(
-            icon: Icon(Icons.logout_rounded, color: context.palette.primary),
-            tooltip: 'Sair',
-            onPressed: onLogout,
-          ),
+        IconButton(
+          icon: Icon(Icons.logout, size: 20, color: p.faint),
+          tooltip: 'Sair',
+          onPressed: onLogout,
         ),
       ],
     );
   }
 }
 
-/// Cartão de destaque escuro com o progresso do dia (estilo "My tasks").
-class _HeroCard extends StatelessWidget {
-  const _HeroCard({
+/// Resumo do dia, como uma página do boletim: o que falta e o progresso.
+class _TodaySummary extends StatelessWidget {
+  const _TodaySummary({
     required this.done,
     required this.total,
     required this.pets,
-    required this.date,
   });
 
   final int done;
   final int total;
   final int pets;
-  final DateTime date;
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     final progress = total == 0 ? 0.0 : done / total;
     final pending = total - done;
     final title = total == 0
@@ -208,86 +192,65 @@ class _HeroCard extends StatelessWidget {
                 ? '1 cuidado por fazer'
                 : '$pending cuidados por fazer';
 
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: context.palette.brandGradient,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: context.palette.softShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Resumo de hoje',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    fontWeight: FontWeight.w600,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(Space.l - Space.xxs),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Resumo de hoje',
+                    style: TextStyle(color: p.muted, fontSize: 14),
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
+                Text(
                   '$pets ${pets == 1 ? 'animal' : 'animais'}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
+                  style: TextStyle(
+                    color: p.faint,
+                    fontSize: 13,
+                    fontFeatures: kTabular,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.4,
+              ],
             ),
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: Colors.white.withValues(alpha: 0.2),
-                    color: context.palette.success,
-                  ),
+            const SizedBox(height: Space.xs),
+            Text(
+              title,
+              style: TextStyle(
+                color: p.ink,
+                fontSize: 22,
+                height: 1.25,
+                fontWeight: FontWeight.w500,
+                fontFeatures: kTabular,
+              ),
+            ),
+            const SizedBox(height: Space.m),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(end: progress),
+                duration: Motion.base,
+                curve: Motion.curve,
+                builder: (context, value, _) => LinearProgressIndicator(
+                  value: value,
+                  minHeight: 6,
+                  backgroundColor: p.raised,
+                  color: p.primary,
                 ),
               ),
-              const SizedBox(width: 14),
-              Text(
-                total == 0 ? '—' : '${(progress * 100).round()}%',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            total == 0
-                ? 'Não há lembretes agendados para hoje.'
-                : '$done de $total lembretes concluídos',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 13),
-          ),
-        ],
+            ),
+            const SizedBox(height: Space.xs),
+            Text(
+              total == 0
+                  ? 'Não há lembretes agendados para hoje'
+                  : '$done de $total ${total == 1 ? 'lembrete concluído' : 'lembretes concluídos'}',
+              style: TextStyle(color: p.muted, fontSize: 13, fontFeatures: kTabular),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -302,12 +265,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w800,
-        color: context.palette.ink,
-        letterSpacing: -0.4,
-      ),
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 17),
     );
   }
 }
@@ -320,26 +278,16 @@ class _HintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(Space.m),
         child: Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: context.palette.primarySoft,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: context.palette.primary),
-            ),
-            const SizedBox(width: 14),
+            Icon(icon, size: 20, color: p.faint),
+            const SizedBox(width: Space.s),
             Expanded(
-              child: Text(
-                text,
-                style: TextStyle(color: context.palette.muted, height: 1.4),
-              ),
+              child: Text(text, style: TextStyle(color: p.muted, height: 1.45)),
             ),
           ],
         ),

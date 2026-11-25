@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!ok) {
       _showError(
         _isLoginMode
-            ? 'Email ou palavra-passe incorretos.'
-            : 'Este email já está registado.',
+            ? 'Email ou palavra-passe incorretos'
+            : 'Este email já está registado',
       );
       return;
     }
@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: context.palette.danger,
       ),
     );
   }
@@ -76,99 +76,87 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: context.palette.brandGradient),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 440),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _Header(isLoginMode: _isLoginMode),
-                    const SizedBox(height: 28),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                _isLoginMode ? 'Entrar' : 'Criar conta',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: context.palette.ink,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(Space.l),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _Header(),
+                  const SizedBox(height: Space.xl),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(Space.l),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              _isLoginMode ? 'Entrar' : 'Criar conta',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: Space.xxs),
+                            Text(
+                              _isLoginMode
+                                  ? 'Continue a acompanhar os cuidados dos seus animais'
+                                  : 'Guarde os cuidados dos seus animais num só lugar',
+                              style: TextStyle(color: p.muted, height: 1.45),
+                            ),
+                            const SizedBox(height: Space.l),
+                            CustomTextField(
+                              controller: _emailCtrl,
+                              label: 'Email',
+                              icon: Icons.alternate_email,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              validator: Validators.email,
+                            ),
+                            const SizedBox(height: Space.s),
+                            CustomTextField(
+                              controller: _passwordCtrl,
+                              label: 'Palavra-passe',
+                              icon: Icons.lock_outline,
+                              obscureText: true,
+                              textInputAction: TextInputAction.done,
+                              validator: Validators.password,
+                            ),
+                            const SizedBox(height: Space.l),
+                            FilledButton(
+                              onPressed: _submitting ? null : _submit,
+                              child: _submitting
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: p.onPrimary,
+                                      ),
+                                    )
+                                  : Text(_isLoginMode ? 'Entrar' : 'Registar'),
+                            ),
+                            const SizedBox(height: Space.xs),
+                            TextButton(
+                              onPressed: _submitting ? null : _toggleMode,
+                              child: Text(
                                 _isLoginMode
-                                    ? 'Bem-vindo de volta! Continue a cuidar dos seus animais.'
-                                    : 'Registe-se em segundos e comece a organizar os cuidados.',
-                                style: TextStyle(
-                                  color: context.palette.muted,
-                                  height: 1.4,
-                                ),
+                                    ? 'Não tem conta? Registe-se aqui'
+                                    : 'Já tem conta? Entre aqui',
                               ),
-                              const SizedBox(height: 24),
-                              CustomTextField(
-                                controller: _emailCtrl,
-                                label: 'Email',
-                                icon: Icons.alternate_email_rounded,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                validator: Validators.email,
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                controller: _passwordCtrl,
-                                label: 'Palavra-passe',
-                                icon: Icons.lock_outline_rounded,
-                                obscureText: true,
-                                textInputAction: TextInputAction.done,
-                                validator: Validators.password,
-                              ),
-                              const SizedBox(height: 24),
-                              FilledButton(
-                                onPressed: _submitting ? null : _submit,
-                                child: _submitting
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(_isLoginMode ? 'Entrar' : 'Registar'),
-                              ),
-                              const SizedBox(height: 8),
-                              TextButton(
-                                onPressed: _submitting ? null : _toggleMode,
-                                child: Text(
-                                  _isLoginMode
-                                      ? 'Não tem conta? Registe-se aqui'
-                                      : 'Já tem conta? Entre aqui',
-                                  style: TextStyle(
-                                    color: context.palette.primary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -178,40 +166,42 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+/// Marca e frase do produto.
 class _Header extends StatelessWidget {
-  const _Header({required this.isLoginMode});
-
-  final bool isLoginMode;
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 84,
-          height: 84,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2),
-          ),
-          child: const Icon(Icons.pets_rounded, size: 42, color: Colors.white),
+        Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: p.primary,
+                borderRadius: BorderRadius.circular(Radii.s),
+              ),
+              child: Icon(Icons.pets, size: 18, color: p.onPrimary),
+            ),
+            const SizedBox(width: Space.s),
+            Text(
+              'PetCare 360',
+              style: TextStyle(
+                color: p.ink,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 14),
-        const Text(
-          'PetCare 360',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 4),
+        const SizedBox(height: Space.l),
         Text(
-          'Saúde, alimentação e compromissos\ndos seus animais num só lugar',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.85), height: 1.4),
+          'Saúde, alimentação e compromissos dos seus animais num só lugar',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 26),
         ),
       ],
     );

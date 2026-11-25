@@ -63,7 +63,10 @@ class _RemindersTabState extends State<RemindersTab> {
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            style: FilledButton.styleFrom(
+              backgroundColor: context.palette.danger,
+              foregroundColor: context.palette.surface,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Remover'),
           ),
@@ -93,7 +96,7 @@ class _RemindersTabState extends State<RemindersTab> {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null, // ver pets_tab.dart
         onPressed: () => _openForm(),
-        icon: const Icon(Icons.add_alarm_rounded),
+        icon: const Icon(Icons.add_alarm_outlined),
         label: const Text('Novo lembrete'),
       ),
       body: _buildBody(),
@@ -104,12 +107,12 @@ class _RemindersTabState extends State<RemindersTab> {
     final all = _reminders;
 
     if (all == null) {
-      return const SkeletonList(itemHeight: 76);
+      return const SkeletonList(itemHeight: 74);
     }
 
     if (all.isEmpty) {
       return EmptyState(
-        icon: Icons.notifications_none_rounded,
+        icon: Icons.notifications_none,
         title: 'Sem lembretes',
         message:
             'Crie lembretes para vacinas, banhos, desparasitações, medicação e passeios. Recebe uma notificação à hora marcada.',
@@ -123,10 +126,10 @@ class _RemindersTabState extends State<RemindersTab> {
     return Column(
       children: [
         SizedBox(
-          height: 56,
+          height: 48,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: Space.m),
             children: [
               _FilterChip(
                 label: 'Todos',
@@ -149,14 +152,14 @@ class _RemindersTabState extends State<RemindersTab> {
         Expanded(
           child: visible.isEmpty
               ? const EmptyState(
-                  icon: Icons.task_alt_rounded,
+                  icon: Icons.task_alt,
                   title: 'Nada por aqui',
-                  message: 'Não há lembretes neste filtro.',
+                  message: 'Não há lembretes neste filtro',
                 )
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                    padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, 96),
                     itemCount: visible.length,
                     itemBuilder: (context, index) {
                       final reminder = visible[index];
@@ -189,21 +192,23 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Padding(
-      padding: const EdgeInsets.only(right: 10, top: 10, bottom: 10),
+      padding: const EdgeInsets.only(right: Space.xs),
       child: ChoiceChip(
         label: Text(label),
         selected: selected,
         onSelected: (_) => onTap(),
-        selectedColor: context.palette.primary,
-        backgroundColor: context.palette.surface,
-        side: BorderSide(
-          color: selected ? context.palette.primary : const Color(0xFFE3E1EE),
-        ),
+        selectedColor: p.ink,
+        backgroundColor: p.surface,
+        side: BorderSide(color: selected ? p.ink : p.border),
         labelStyle: TextStyle(
-          color: selected ? context.palette.onPrimary : context.palette.ink,
-          fontWeight: FontWeight.w700,
+          color: selected ? p.surface : p.muted,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
+        padding: const EdgeInsets.symmetric(horizontal: Space.xxs),
+        visualDensity: VisualDensity.compact,
         showCheckmark: false,
       ),
     );

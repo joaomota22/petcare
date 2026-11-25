@@ -77,7 +77,7 @@ class _PetFormScreenState extends State<PetFormScreen> {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível guardar. Tente novamente.')),
+        const SnackBar(content: Text('Não foi possível guardar. Tente novamente')),
       );
       return;
     }
@@ -91,7 +91,7 @@ class _PetFormScreenState extends State<PetFormScreen> {
     return FormScaffold(
       title: _isEditing ? 'Editar animal' : 'Novo animal',
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+        padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, Space.xl),
         child: Form(
           key: _formKey,
           child: Column(
@@ -101,12 +101,13 @@ class _PetFormScreenState extends State<PetFormScreen> {
               CustomTextField(
                 controller: _nameCtrl,
                 label: 'Nome do animal',
-                icon: Icons.pets_rounded,
+                icon: Icons.pets_outlined,
                 textInputAction: TextInputAction.next,
                 validator: Validators.petName,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: Space.s),
               DropdownButtonFormField<String>(
+                style: TextStyle(fontSize: 16, color: context.palette.ink),
                 initialValue: _species,
                 decoration: const InputDecoration(
                   labelText: 'Espécie',
@@ -117,23 +118,24 @@ class _PetFormScreenState extends State<PetFormScreen> {
                     .toList(),
                 onChanged: (value) => setState(() => _species = value!),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: Space.s),
               DropdownButtonFormField<String>(
+                style: TextStyle(fontSize: 16, color: context.palette.ink),
                 initialValue: _gender,
                 decoration: const InputDecoration(
                   labelText: 'Género',
-                  prefixIcon: Icon(Icons.male_rounded),
+                  prefixIcon: Icon(Icons.wc_outlined),
                 ),
                 items: petGenders
                     .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                     .toList(),
                 onChanged: (value) => setState(() => _gender = value!),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: Space.s),
               CustomTextField(
                 controller: _breedCtrl,
                 label: 'Raça',
-                icon: Icons.auto_awesome_outlined,
+                icon: Icons.label_outline,
                 textInputAction: TextInputAction.next,
                 validator: Validators.breed,
               ),
@@ -151,7 +153,7 @@ class _PetFormScreenState extends State<PetFormScreen> {
                       validator: Validators.age,
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: Space.s),
                   Expanded(
                     child: CustomTextField(
                       controller: _weightCtrl,
@@ -176,16 +178,16 @@ class _PetFormScreenState extends State<PetFormScreen> {
                 maxLines: 4,
                 maxLength: 300,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: Space.xl),
               FilledButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: context.palette.onPrimary,
                         ),
                       )
                     : Text(_isEditing ? 'Guardar alterações' : 'Guardar animal'),
@@ -206,14 +208,13 @@ class _FormSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: Space.s),
       child: Text(
-        title.toUpperCase(),
+        title,
         style: TextStyle(
-          color: context.palette.primary,
-          fontWeight: FontWeight.w800,
-          fontSize: 12,
-          letterSpacing: 1,
+          color: context.palette.muted,
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
         ),
       ),
     );

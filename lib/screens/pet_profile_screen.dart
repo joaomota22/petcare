@@ -100,7 +100,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            style: FilledButton.styleFrom(
+              backgroundColor: context.palette.danger,
+              foregroundColor: context.palette.surface,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Remover'),
           ),
@@ -139,7 +142,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pet?.name ?? 'Animal'),
+        // O nome já aparece no cabeçalho do perfil.
+        title: pet == null ? const Text('Animal') : null,
         actions: [
           if (pet != null) ...[
             IconButton(
@@ -148,7 +152,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               onPressed: _edit,
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded),
+              icon: const Icon(Icons.delete_outline),
               tooltip: 'Remover',
               onPressed: _delete,
             ),
@@ -165,7 +169,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     }
     if (_notFound || pet == null) {
       return const EmptyState(
-        icon: Icons.search_off_rounded,
+        icon: Icons.search_off,
         title: 'Animal não encontrado',
         message: 'Pode ter sido removido.',
       );
@@ -174,70 +178,47 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+        padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, Space.xl),
         children: [
           _ProfileHeader(pet: pet),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoTile(
-                  icon: Icons.cake_outlined,
-                  label: 'Idade',
-                  value: '${pet.age} ${pet.age == 1 ? 'ano' : 'anos'}',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _InfoTile(
-                  icon: Icons.monitor_weight_outlined,
-                  label: 'Peso',
-                  value: '${formatWeight(pet.weight)} kg',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _InfoTile(
-                  icon: Icons.male_rounded,
-                  label: 'Género',
-                  value: pet.gender,
-                ),
-              ),
-            ],
+          const SizedBox(height: Space.l),
+          _FactsCard(pet: pet),
+          const SizedBox(height: Space.s),
+          _WeightCard(
+            weights: _weights,
+            currentWeight: pet.weight,
+            onAdd: _addWeight,
           ),
-          const SizedBox(height: 16),
-          _WeightCard(weights: _weights, onAdd: _addWeight),
           if (pet.medicalNotes.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: Space.s),
             _NotesCard(notes: pet.medicalNotes),
           ],
-          const SizedBox(height: 24),
+          const SizedBox(height: Space.l),
           Row(
             children: [
               Expanded(
                 child: Text(
                   'Próximos lembretes',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: context.palette.ink,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontSize: 17),
                 ),
               ),
               TextButton.icon(
                 onPressed: _addReminder,
-                icon: const Icon(Icons.add_rounded),
+                icon: const Icon(Icons.add, size: 18),
                 label: const Text('Novo'),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: Space.xs),
           if (_reminders.isEmpty)
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(Space.m),
                 child: Text(
-                  'Sem lembretes pendentes para ${pet.name}.',
+                  'Sem lembretes pendentes para ${pet.name}',
                   style: TextStyle(color: context.palette.muted),
                 ),
               ),
@@ -262,73 +243,47 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: context.palette.brandGradient,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(3),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: PetAvatar(name: pet.name, species: pet.species, size: 76),
+    final p = context.palette;
+    return Row(
+      children: [
+        PetAvatar(name: pet.name, species: pet.species, size: 64),
+        const SizedBox(width: Space.m),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(pet.name, style: Theme.of(context).textTheme.headlineMedium),
+              const SizedBox(height: Space.xxs),
+              Text(
+                '${pet.species} · ${pet.breed}',
+                style: TextStyle(color: p.muted, fontSize: 15),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pet.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${pet.species} • ${pet.breed}',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _InfoTile extends StatelessWidget {
-  const _InfoTile({required this.icon, required this.label, required this.value});
+/// Idade, peso e género numa só linha de ficha, separados por linhas finas.
+class _FactsCard extends StatelessWidget {
+  const _FactsCard({required this.pet});
 
-  final IconData icon;
-  final String label;
-  final String value;
+  final Pet pet;
 
   @override
   Widget build(BuildContext context) {
+    final divider = VerticalDivider(width: 1, thickness: 1, color: context.palette.border);
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-        child: Column(
+      child: IntrinsicHeight(
+        child: Row(
           children: [
-            Icon(icon, color: context.palette.primary),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.w800, color: context.palette.ink),
-            ),
-            Text(label, style: TextStyle(color: context.palette.muted, fontSize: 12)),
+            _Fact(label: 'Idade', value: '${pet.age} ${pet.age == 1 ? 'ano' : 'anos'}'),
+            divider,
+            _Fact(label: 'Peso', value: '${formatWeight(pet.weight)} kg'),
+            divider,
+            _Fact(label: 'Género', value: pet.gender),
           ],
         ),
       ),
@@ -336,47 +291,140 @@ class _InfoTile extends StatelessWidget {
   }
 }
 
-class _WeightCard extends StatelessWidget {
-  const _WeightCard({required this.weights, required this.onAdd});
+class _Fact extends StatelessWidget {
+  const _Fact({required this.label, required this.value});
 
-  final List<WeightEntry> weights;
-  final VoidCallback onAdd;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: TextStyle(color: p.faint, fontSize: 13)),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: p.ink,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontFeatures: kTabular,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Peso atual, variação desde o primeiro registo e a curva ao longo do tempo.
+class _WeightCard extends StatelessWidget {
+  const _WeightCard({
+    required this.weights,
+    required this.currentWeight,
+    required this.onAdd,
+  });
+
+  final List<WeightEntry> weights;
+  final double currentWeight;
+  final VoidCallback onAdd;
+
+  String? _changeLabel() {
+    if (weights.length < 2) return null;
+    final first = weights.first;
+    final delta = weights.last.weight - first.weight;
+    final since = formatDate(first.recordedAt).substring(0, 5);
+    if (delta.abs() < 0.05) return 'Sem alteração desde $since';
+    final sign = delta > 0 ? '+' : '−';
+    return '$sign${formatWeight(delta.abs())} kg desde $since';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final latest = weights.isEmpty ? currentWeight : weights.last.weight;
+    final change = _changeLabel();
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+        padding: const EdgeInsets.fromLTRB(Space.m, Space.m, Space.xs, Space.m),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Expanded(
-                  child: Text(
-                    'Evolução do peso',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Evolução do peso', style: TextStyle(color: p.muted, fontSize: 14)),
+                      const SizedBox(height: Space.xxs),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: formatWeight(latest),
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w500,
+                                color: p.ink,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' kg',
+                              style: TextStyle(fontSize: 16, color: p.muted),
+                            ),
+                          ],
+                        ),
+                        style: const TextStyle(fontFeatures: kTabular),
+                      ),
+                      if (change != null)
+                        Text(
+                          change,
+                          style: TextStyle(
+                            color: p.muted,
+                            fontSize: 13,
+                            fontFeatures: kTabular,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                FilledButton.tonalIcon(
+                TextButton.icon(
                   onPressed: onAdd,
-                  icon: const Icon(Icons.add_rounded, size: 18),
+                  icon: const Icon(Icons.add, size: 18),
                   label: const Text('Registar'),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: Space.l),
             SizedBox(
-              height: 200,
+              height: 168,
               child: weights.length < 2
                   ? Center(
-                      child: Text(
-                        'Registe pelo menos dois pesos para ver o gráfico.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: context.palette.muted),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: Space.xs),
+                        child: Text(
+                          'Registe pelo menos dois pesos para ver a evolução',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: p.faint),
+                        ),
                       ),
                     )
-                  : _WeightChart(weights: weights),
+                  : Padding(
+                      padding: const EdgeInsets.only(right: Space.xs),
+                      child: _WeightChart(weights: weights),
+                    ),
             ),
           ],
         ),
@@ -390,49 +438,87 @@ class _WeightChart extends StatelessWidget {
 
   final List<WeightEntry> weights;
 
+  /// Passo "redondo" (0.5, 1, 2, 5…) que divide o intervalo em ~3 linhas.
+  static double _niceStep(double range) {
+    final raw = range / 3;
+    for (final s in [0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0]) {
+      if (raw <= s) return s;
+    }
+    return 100;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     final values = weights.map((w) => w.weight).toList();
-    final minY = values.reduce((a, b) => a < b ? a : b) - 1;
-    final maxY = values.reduce((a, b) => a > b ? a : b) + 1;
+    final lo = values.reduce((a, b) => a < b ? a : b);
+    final hi = values.reduce((a, b) => a > b ? a : b);
+    final step = _niceStep((hi - lo) < 1 ? 1 : hi - lo);
+    final minY = lo - step / 4;
+    final maxY = hi + step / 4;
+    final last = weights.length - 1;
     final spots = [
       for (var i = 0; i < weights.length; i++)
         FlSpot(i.toDouble(), weights[i].weight),
     ];
+    final labelStyle = TextStyle(color: p.faint, fontSize: 11, fontFeatures: kTabular);
 
     return LineChart(
       LineChartData(
         minY: minY < 0 ? 0 : minY,
         maxY: maxY,
-        gridData: const FlGridData(drawVerticalLine: false),
+        minX: 0,
+        maxX: last.toDouble(),
+        gridData: FlGridData(
+          drawVerticalLine: false,
+          horizontalInterval: step,
+          getDrawingHorizontalLine: (_) => FlLine(color: p.border, strokeWidth: 1),
+        ),
         borderData: FlBorderData(show: false),
+        lineTouchData: LineTouchData(
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (_) => p.ink,
+            getTooltipItems: (spots) => [
+              for (final s in spots)
+                LineTooltipItem(
+                  '${formatWeight(s.y)} kg',
+                  TextStyle(color: p.surface, fontSize: 12, fontFeatures: kTabular),
+                ),
+            ],
+          ),
+        ),
         titlesData: FlTitlesData(
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) => Text(
-                formatWeight(value),
-                style: TextStyle(color: context.palette.muted, fontSize: 11),
-              ),
+              reservedSize: 32,
+              interval: step,
+              getTitlesWidget: (value, meta) {
+                // Só os valores redondos da grelha, não os limites do eixo.
+                final onGrid = (value / step - (value / step).round()).abs() < 1e-6;
+                if (!onGrid) return const SizedBox.shrink();
+                return Text(formatWeight(value), style: labelStyle);
+              },
             ),
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 28,
+              reservedSize: 24,
               interval: 1,
               getTitlesWidget: (value, meta) {
                 final i = value.toInt();
-                if (i < 0 || i >= weights.length) return const SizedBox.shrink();
-                final d = weights[i].recordedAt;
-                return Padding(
-                  padding: const EdgeInsets.only(top: 6),
+                // Só o primeiro e o último registo, para não amontoar datas.
+                if (i != 0 && i != last) return const SizedBox.shrink();
+                return SideTitleWidget(
+                  meta: meta,
+                  space: Space.xs,
+                  fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
                   child: Text(
-                    formatDate(d).substring(0, 5),
-                    style: TextStyle(color: context.palette.muted, fontSize: 10),
+                    formatDate(weights[i].recordedAt).substring(0, 5),
+                    style: labelStyle,
                   ),
                 );
               },
@@ -443,13 +529,22 @@ class _WeightChart extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: context.palette.primary,
-            barWidth: 3,
-            dotData: const FlDotData(show: true),
-            belowBarData: BarAreaData(
+            preventCurveOverShooting: true,
+            color: p.primary,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
               show: true,
-              color: context.palette.primary.withValues(alpha: 0.12),
+              // Só o registo mais recente fica marcado.
+              checkToShowDot: (spot, _) => spot.x == last,
+              getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
+                radius: 4,
+                color: p.primary,
+                strokeWidth: 2,
+                strokeColor: p.surface,
+              ),
             ),
+            belowBarData: BarAreaData(show: false),
           ),
         ],
       ),
@@ -464,20 +559,16 @@ class _NotesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+        padding: const EdgeInsets.all(Space.m),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.medical_information_outlined, color: context.palette.accent),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                notes,
-                style: TextStyle(color: context.palette.ink, height: 1.4),
-              ),
-            ),
+            Text('Notas de saúde', style: TextStyle(color: p.faint, fontSize: 13)),
+            const SizedBox(height: Space.xxs),
+            Text(notes, style: TextStyle(color: p.ink, height: 1.45)),
           ],
         ),
       ),

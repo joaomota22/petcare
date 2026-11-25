@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
 
-/// Avatar do animal: círculo com a cor da espécie e a inicial do nome.
+/// Avatar do animal: círculo neutro com a inicial do nome.
 class PetAvatar extends StatelessWidget {
   const PetAvatar({
     super.key,
     required this.name,
     required this.species,
-    this.size = 56,
+    this.size = 48,
   });
 
   final String name;
@@ -17,7 +17,7 @@ class PetAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = speciesColor(species);
+    final p = context.palette;
     final initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
 
     return Container(
@@ -25,16 +25,16 @@ class PetAvatar extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: p.raised,
         shape: BoxShape.circle,
-        border: Border.all(color: color.withValues(alpha: 0.4), width: 2),
+        border: Border.all(color: p.border),
       ),
       child: Text(
         initial,
         style: TextStyle(
-          color: color,
-          fontSize: size * 0.42,
-          fontWeight: FontWeight.w800,
+          color: p.muted,
+          fontSize: size * 0.4,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

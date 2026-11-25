@@ -11,103 +11,90 @@ class Space {
   static const double xl = 32;
 }
 
-/// Raios de canto refinados.
+/// Raios de canto: controlos 10, cartões 14, folhas e diálogos 20.
 class Radii {
   Radii._();
-  static const double s = 12;
-  static const double m = 16;
-  static const double l = 20;
-  static const double xl = 24;
-  static const double xxl = 32;
+  static const double s = 8;
+  static const double control = 10;
+  static const double card = 14;
+  static const double sheet = 20;
 }
 
-/// Tokens de cor. Três cores principais (primária, secundária/accent e sucesso)
-/// mais neutros, com variantes para modo claro e escuro.
+/// Algarismos de largura fixa para pesos, horas e contagens.
+const List<FontFeature> kTabular = [FontFeature.tabularFigures()];
+
+/// Tokens de cor. Neutros cinzentos (papel do boletim de vacinas), um único
+/// acento índigo e duas cores semânticas suaves.
 @immutable
 class AppPalette extends ThemeExtension<AppPalette> {
   const AppPalette({
     required this.primary,
     required this.onPrimary,
     required this.primarySoft,
-    required this.accent,
+    required this.danger,
     required this.success,
     required this.ink,
     required this.muted,
+    required this.faint,
     required this.background,
     required this.surface,
+    required this.raised,
     required this.border,
-    required this.shadow,
-    required this.gradient,
   });
 
-  /// Cor principal (ações, seleção, destaque).
+  /// Acento: ação principal, seleção e o valor que importa.
   final Color primary;
-  /// Texto/ícones sobre a cor principal.
+  /// Texto/ícones sobre o acento.
   final Color onPrimary;
-  /// Fundo suave da cor principal (caixas de ícone, etiquetas).
+  /// Fundo muito suave do acento (estado ativo da navegação).
   final Color primarySoft;
-  /// Cor secundária (alertas, remoção).
-  final Color accent;
-  /// Cor de sucesso (concluído, progresso).
+  /// Erros e remoção confirmada.
+  final Color danger;
+  /// Concluído.
   final Color success;
   /// Texto principal.
   final Color ink;
-  /// Texto secundário (com contraste ≥ 4.5:1 sobre o fundo).
+  /// Texto secundário (contraste ≥ 4.5:1).
   final Color muted;
+  /// Texto terciário, metadados e ícones discretos.
+  final Color faint;
   /// Fundo do ecrã.
   final Color background;
   /// Superfície de cartões.
   final Color surface;
-  /// Contornos subtis.
+  /// Um degrau acima da superfície (avatares, carimbos, trilhos).
+  final Color raised;
+  /// Linha fina de contorno.
   final Color border;
-  /// Sombra difusa (nunca preta chapada).
-  final Color shadow;
-  /// Gradiente de cartões de destaque.
-  final List<Color> gradient;
-
-  LinearGradient get brandGradient => LinearGradient(
-        colors: gradient,
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
-
-  List<BoxShadow> get softShadow => [
-        BoxShadow(color: shadow, blurRadius: 24, offset: const Offset(0, 10)),
-        BoxShadow(
-          color: shadow.withValues(alpha: shadow.a * 0.5),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ];
 
   static const light = AppPalette(
     primary: Color(0xFF3D3A8C),
     onPrimary: Color(0xFFFFFFFF),
-    primarySoft: Color(0xFFE6E7F8),
-    accent: Color(0xFFE5566B),
-    success: Color(0xFF13A393),
-    ink: Color(0xFF1B1A3A),
-    muted: Color(0xFF5F6283),
-    background: Color(0xFFEEF1FB),
+    primarySoft: Color(0xFFECECF6),
+    danger: Color(0xFFB0433D),
+    success: Color(0xFF2F7A57),
+    ink: Color(0xFF1C1C1F),
+    muted: Color(0xFF5C5C63),
+    faint: Color(0xFF75757C),
+    background: Color(0xFFF6F6F4),
     surface: Color(0xFFFFFFFF),
-    border: Color(0xFFE4E7F3),
-    shadow: Color(0x1F2A2766),
-    gradient: [Color(0xFF4A47A3), Color(0xFF2A2766)],
+    raised: Color(0xFFEFEFEC),
+    border: Color(0xFFE4E4E0),
   );
 
   static const dark = AppPalette(
-    primary: Color(0xFF8F8BF0),
-    onPrimary: Color(0xFF12112A),
-    primarySoft: Color(0xFF2A2950),
-    accent: Color(0xFFFF8A99),
-    success: Color(0xFF3DD6C7),
-    ink: Color(0xFFF2F2FA),
-    muted: Color(0xFFA7AAC6),
-    background: Color(0xFF0E0D1E),
-    surface: Color(0xFF191830),
-    border: Color(0xFF2A2945),
-    shadow: Color(0x66000000),
-    gradient: [Color(0xFF3B38A0), Color(0xFF1F1D4F)],
+    primary: Color(0xFFAFACF2),
+    onPrimary: Color(0xFF17162E),
+    primarySoft: Color(0xFF26263A),
+    danger: Color(0xFFE2867E),
+    success: Color(0xFF79C29C),
+    ink: Color(0xFFEDEDEF),
+    muted: Color(0xFFA6A6AD),
+    faint: Color(0xFF85858C),
+    background: Color(0xFF141415),
+    surface: Color(0xFF1C1C1E),
+    raised: Color(0xFF262628),
+    border: Color(0xFF2C2C2F),
   );
 
   @override
@@ -115,48 +102,49 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? primary,
     Color? onPrimary,
     Color? primarySoft,
-    Color? accent,
+    Color? danger,
     Color? success,
     Color? ink,
     Color? muted,
+    Color? faint,
     Color? background,
     Color? surface,
+    Color? raised,
     Color? border,
-    Color? shadow,
-    List<Color>? gradient,
   }) {
     return AppPalette(
       primary: primary ?? this.primary,
       onPrimary: onPrimary ?? this.onPrimary,
       primarySoft: primarySoft ?? this.primarySoft,
-      accent: accent ?? this.accent,
+      danger: danger ?? this.danger,
       success: success ?? this.success,
       ink: ink ?? this.ink,
       muted: muted ?? this.muted,
+      faint: faint ?? this.faint,
       background: background ?? this.background,
       surface: surface ?? this.surface,
+      raised: raised ?? this.raised,
       border: border ?? this.border,
-      shadow: shadow ?? this.shadow,
-      gradient: gradient ?? this.gradient,
     );
   }
 
   @override
   AppPalette lerp(ThemeExtension<AppPalette>? other, double t) {
     if (other is! AppPalette) return this;
+    Color l(Color a, Color b) => Color.lerp(a, b, t)!;
     return AppPalette(
-      primary: Color.lerp(primary, other.primary, t)!,
-      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
-      primarySoft: Color.lerp(primarySoft, other.primarySoft, t)!,
-      accent: Color.lerp(accent, other.accent, t)!,
-      success: Color.lerp(success, other.success, t)!,
-      ink: Color.lerp(ink, other.ink, t)!,
-      muted: Color.lerp(muted, other.muted, t)!,
-      background: Color.lerp(background, other.background, t)!,
-      surface: Color.lerp(surface, other.surface, t)!,
-      border: Color.lerp(border, other.border, t)!,
-      shadow: Color.lerp(shadow, other.shadow, t)!,
-      gradient: t < 0.5 ? gradient : other.gradient,
+      primary: l(primary, other.primary),
+      onPrimary: l(onPrimary, other.onPrimary),
+      primarySoft: l(primarySoft, other.primarySoft),
+      danger: l(danger, other.danger),
+      success: l(success, other.success),
+      ink: l(ink, other.ink),
+      muted: l(muted, other.muted),
+      faint: l(faint, other.faint),
+      background: l(background, other.background),
+      surface: l(surface, other.surface),
+      raised: l(raised, other.raised),
+      border: l(border, other.border),
     );
   }
 }
@@ -169,7 +157,7 @@ extension PaletteContext on BuildContext {
 /// Duração e curva padrão para micro-interações.
 class Motion {
   Motion._();
-  static const Duration fast = Duration(milliseconds: 180);
-  static const Duration base = Duration(milliseconds: 280);
+  static const Duration fast = Duration(milliseconds: 160);
+  static const Duration base = Duration(milliseconds: 240);
   static const Curve curve = Curves.easeOutCubic;
 }

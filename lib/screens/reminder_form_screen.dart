@@ -137,7 +137,7 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível guardar. Tente novamente.')),
+        const SnackBar(content: Text('Não foi possível guardar. Tente novamente')),
       );
       return;
     }
@@ -163,24 +163,25 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
 
     if (pets.isEmpty) {
       return const EmptyState(
-        icon: Icons.pets_rounded,
+        icon: Icons.pets_outlined,
         title: 'Ainda não há animais',
         message: 'Registe primeiro um animal para lhe criar lembretes.',
       );
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, Space.xl),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DropdownButtonFormField<int>(
+              style: TextStyle(fontSize: 16, color: context.palette.ink),
               initialValue: _petId,
               decoration: const InputDecoration(
                 labelText: 'Animal',
-                prefixIcon: Icon(Icons.pets_rounded),
+                prefixIcon: Icon(Icons.pets_outlined),
               ),
               items: pets
                   .map((p) => DropdownMenuItem(value: p.id, child: Text(p.name)))
@@ -188,8 +189,9 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
               validator: (value) => value == null ? 'Escolha um animal' : null,
               onChanged: (value) => setState(() => _petId = value),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: Space.s),
             DropdownButtonFormField<ReminderCategory>(
+              style: TextStyle(fontSize: 16, color: context.palette.ink),
               initialValue: _category,
               decoration: const InputDecoration(
                 labelText: 'Tipo de cuidado',
@@ -199,28 +201,22 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
                   .map(
                     (c) => DropdownMenuItem(
                       value: c,
-                      child: Row(
-                        children: [
-                          Icon(c.icon, size: 20, color: c.color),
-                          const SizedBox(width: 10),
-                          Text(c.label),
-                        ],
-                      ),
+                      child: Text(c.label),
                     ),
                   )
                   .toList(),
               onChanged: (value) => setState(() => _category = value!),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: Space.s),
             CustomTextField(
               controller: _titleCtrl,
               label: 'Título',
               hint: 'Ex.: Vacina da raiva',
-              icon: Icons.title_rounded,
+              icon: Icons.title,
               textInputAction: TextInputAction.next,
               validator: Validators.reminderTitle,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: Space.s),
             Row(
               children: [
                 Expanded(
@@ -231,10 +227,10 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
                     onTap: _pickDate,
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: Space.s),
                 Expanded(
                   child: _PickerField(
-                    icon: Icons.access_time_rounded,
+                    icon: Icons.access_time,
                     label: 'Hora',
                     value: formatTime(_dateTime),
                     onTap: _pickTime,
@@ -242,11 +238,11 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: Space.s),
             CustomTextField(
               controller: _notesCtrl,
               label: 'Notas (opcional)',
-              icon: Icons.notes_rounded,
+              icon: Icons.notes,
               maxLines: 3,
               maxLength: 200,
             ),
@@ -254,12 +250,12 @@ class _ReminderFormScreenState extends State<ReminderFormScreen> {
             FilledButton(
               onPressed: _saving ? null : _save,
               child: _saving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: context.palette.onPrimary,
                       ),
                     )
                   : Text(_isEditing ? 'Guardar alterações' : 'Criar lembrete'),
@@ -288,7 +284,7 @@ class _PickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(Radii.control),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
@@ -296,7 +292,11 @@ class _PickerField extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: TextStyle(fontWeight: FontWeight.w600, color: context.palette.ink),
+          style: TextStyle(
+            fontSize: 16,
+            color: context.palette.ink,
+            fontFeatures: kTabular,
+          ),
         ),
       ),
     );

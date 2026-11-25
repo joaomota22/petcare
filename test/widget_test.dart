@@ -22,6 +22,7 @@ void main() {
     await tester.pumpWidget(const PetCareApp(isLoggedIn: false));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Entrar'));
     await tester.tap(find.widgetWithText(FilledButton, 'Entrar'));
     await tester.pumpAndSettle();
 

@@ -1,51 +1,28 @@
 import 'package:flutter/material.dart';
 
-/// Estado "a carregar": cartões de esqueleto a pulsar.
-class SkeletonList extends StatefulWidget {
-  const SkeletonList({super.key, this.itemCount = 4, this.itemHeight = 92});
+import '../app_theme.dart';
+
+/// Estado "a carregar": cartões vazios com a forma do conteúdo, sem animação.
+class SkeletonList extends StatelessWidget {
+  const SkeletonList({super.key, this.itemCount = 4, this.itemHeight = 82});
 
   final int itemCount;
   final double itemHeight;
 
   @override
-  State<SkeletonList> createState() => _SkeletonListState();
-}
-
-class _SkeletonListState extends State<SkeletonList>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 900),
-  )..repeat(reverse: true);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
-      itemCount: widget.itemCount,
+      padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, 96),
+      itemCount: itemCount,
       itemBuilder: (context, index) {
-        return AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            return Container(
-              height: widget.itemHeight,
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Color.lerp(
-                  const Color(0xFFEDEBF5),
-                  const Color(0xFFF9F8FD),
-                  _controller.value,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-            );
-          },
+        return Container(
+          height: itemHeight,
+          margin: const EdgeInsets.only(bottom: Space.xs),
+          decoration: BoxDecoration(
+            color: p.raised,
+            borderRadius: BorderRadius.circular(Radii.card),
+          ),
         );
       },
     );

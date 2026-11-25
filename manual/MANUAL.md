@@ -43,7 +43,7 @@ A aplicação tem três separadores, visíveis na barra inferior: **Início**, *
 
 Mostra o resumo do dia:
 
-- **Resumo de hoje:** cartão com o número de cuidados por fazer, a percentagem concluída e o número de animais registados.
+- **Resumo de hoje:** cartão com o número de cuidados por fazer, uma barra de progresso dos lembretes concluídos e o número de animais registados.
 - **Hoje:** lista dos lembretes do dia. Toque no círculo à direita para marcar um lembrete como concluído.
 - **Próximos lembretes:** os três próximos lembretes ainda por fazer.
 
@@ -90,7 +90,7 @@ Lista todos os lembretes, dos mais próximos aos mais distantes. Os filtros no t
 - **Por fazer**
 - **Concluídos**
 
-Cada lembrete mostra o tipo de cuidado (com ícone e cor próprios), o animal, a data e a hora. Toque no lembrete para o editar, no círculo para o marcar como concluído, ou no ícone da lixeira para o remover.
+Cada lembrete mostra à esquerda a data (dia e mês, como um carimbo no boletim de vacinas) e, ao lado, o título, o tipo de cuidado com o seu ícone, o animal e a hora. Toque no lembrete para o editar, no círculo para o marcar como concluído, ou no ícone da lixeira para o remover.
 
 ![Lista de lembretes](screenshots/06_lembretes.png)
 

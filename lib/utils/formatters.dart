@@ -58,6 +58,15 @@ String formatWeight(double weight) {
       : weight.toStringAsFixed(1);
 }
 
+/// Mês abreviado em minúsculas, ex.: "nov"
+String formatShortMonth(DateTime d) => _months[d.month - 1].substring(0, 3);
+
+/// Ex.: "13 de novembro"
+String formatDayMonth(DateTime d) => '${d.day} de ${_months[d.month - 1]}';
+
+/// Ex.: "Sexta-feira"
+String formatWeekday(DateTime d) => _weekdays[d.weekday - 1];
+
 /// "Bom dia", "Boa tarde" ou "Boa noite"
 String greetingFor(DateTime d) {
   if (d.hour < 12) return 'Bom dia';

@@ -69,7 +69,10 @@ class _PetsTabState extends State<PetsTab> {
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            style: FilledButton.styleFrom(
+              backgroundColor: context.palette.danger,
+              foregroundColor: context.palette.surface,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Remover'),
           ),
@@ -91,20 +94,14 @@ class _PetsTabState extends State<PetsTab> {
         actions: [
           if (pets != null && pets.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.only(right: Space.m),
               child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: context.palette.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    '${pets.length}',
-                    style: TextStyle(
-                      color: context.palette.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
+                child: Text(
+                  '${pets.length}',
+                  style: TextStyle(
+                    color: context.palette.faint,
+                    fontSize: 15,
+                    fontFeatures: kTabular,
                   ),
                 ),
               ),
@@ -116,7 +113,7 @@ class _PetsTabState extends State<PetsTab> {
         // botões com a mesma tag geram conflitos de Hero ao navegar.
         heroTag: null,
         onPressed: _openForm,
-        icon: const Icon(Icons.add_rounded),
+        icon: const Icon(Icons.add, size: 20),
         label: const Text('Adicionar'),
       ),
       body: _buildBody(pets),
@@ -130,10 +127,10 @@ class _PetsTabState extends State<PetsTab> {
 
     if (pets.isEmpty) {
       return EmptyState(
-        icon: Icons.pets_rounded,
+        icon: Icons.pets_outlined,
         title: 'Nenhum animal registado',
         message:
-            'Registe o seu primeiro amigo para começar a acompanhar a saúde, o peso e os cuidados.',
+            'Registe o primeiro animal para acompanhar a saúde, o peso e os cuidados.',
         actionLabel: 'Adicionar animal',
         onAction: _openForm,
       );
@@ -142,7 +139,7 @@ class _PetsTabState extends State<PetsTab> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+        padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, 96),
         itemCount: pets.length,
         itemBuilder: (context, index) {
           final pet = pets[index];

@@ -5,8 +5,9 @@ import 'pressable.dart';
 import '../app_theme.dart';
 import '../models/reminder.dart';
 import '../utils/formatters.dart';
+import 'date_stamp.dart';
 
-/// Linha de lembrete: caixa de ícone tingida pela categoria, texto e círculo de conclusão.
+/// Linha de lembrete: carimbo de data, título, tipo e hora, e círculo de conclusão.
 class ReminderTile extends StatelessWidget {
   const ReminderTile({
     super.key,
@@ -14,45 +15,37 @@ class ReminderTile extends StatelessWidget {
     required this.onToggle,
     this.onTap,
     this.onDelete,
-    this.showDate = true,
   });
 
   final Reminder reminder;
   final ValueChanged<bool> onToggle;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
-  final bool showDate;
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     final done = reminder.done;
-    final color = done ? context.palette.muted : reminder.category.color;
-    final when = showDate
-        ? formatRelativeDateTime(reminder.dateTime)
-        : formatTime(reminder.dateTime);
     final petLabel = reminder.petName ?? 'Sem animal';
 
     return Pressable(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: Space.xs),
         child: Card(
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 8, 14),
+              padding: EdgeInsets.fromLTRB(
+                Space.s,
+                Space.s,
+                onDelete == null ? Space.m : Space.xxs,
+                Space.s,
+              ),
               child: Row(
                 children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(reminder.category.icon, color: color),
-                  ),
-                  const SizedBox(width: 14),
+                  DateStamp(date: reminder.dateTime, dimmed: done),
+                  const SizedBox(width: Space.s),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,38 +55,41 @@ class ReminderTile extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15.5,
-                            color: done
-                                ? context.palette.muted
-                                : context.palette.ink,
-                            decoration: done
-                                ? TextDecoration.lineThrough
-                                : null,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: done ? p.faint : p.ink,
+                            decoration: done ? TextDecoration.lineThrough : null,
+                            decorationColor: p.faint,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$petLabel • $when',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: context.palette.muted,
-                            fontSize: 12.5,
-                          ),
+                        const SizedBox(height: Space.xxs),
+                        Row(
+                          children: [
+                            Icon(reminder.category.icon, size: 16, color: p.faint),
+                            const SizedBox(width: Space.xxs),
+                            Expanded(
+                              child: Text(
+                                '${reminder.category.label} · $petLabel · ${formatTime(reminder.dateTime)}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: p.muted,
+                                  fontSize: 13,
+                                  fontFeatures: kTabular,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  _DoneCircle(
-                    done: done,
-                    color: context.palette.primary,
-                    onTap: () => onToggle(!done),
-                  ),
+                  const SizedBox(width: Space.xs),
+                  _DoneCircle(done: done, onTap: () => onToggle(!done)),
                   if (onDelete != null)
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded),
-                      color: context.palette.accent,
+                      icon: const Icon(Icons.delete_outline, size: 20),
+                      color: p.faint,
                       tooltip: 'Remover',
                       onPressed: onDelete,
                     ),
@@ -108,37 +104,44 @@ class ReminderTile extends StatelessWidget {
 }
 
 class _DoneCircle extends StatelessWidget {
-  const _DoneCircle({
-    required this.done,
-    required this.color,
-    required this.onTap,
-  });
+  const _DoneCircle({required this.done, required this.onTap});
 
   final bool done;
-  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 26,
-        height: 26,
-        decoration: BoxDecoration(
-          color: done ? context.palette.success : Colors.transparent,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: done
-                ? context.palette.success
-                : color.withValues(alpha: 0.4),
-            width: 2,
+    final p = context.palette;
+    return Semantics(
+      button: true,
+      checked: done,
+      label: done ? 'Marcar como por fazer' : 'Marcar como concluído',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Center(
+            child: AnimatedContainer(
+              duration: Motion.fast,
+              curve: Motion.curve,
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: done ? p.success : Colors.transparent,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: done ? p.success : p.faint.withValues(alpha: 0.6),
+                  width: 1.5,
+                ),
+              ),
+              child: done
+                  ? Icon(Icons.check, size: 16, color: p.surface)
+                  : null,
+            ),
           ),
         ),
-        child: done
-            ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
-            : null,
       ),
     );
   }

@@ -14,104 +14,91 @@ ThemeData buildAppTheme({required bool dark}) {
     brightness: brightness,
     primary: p.primary,
     onPrimary: p.onPrimary,
-    secondary: p.accent,
-    tertiary: p.success,
+    secondary: p.primary,
+    error: p.danger,
     surface: p.surface,
     onSurface: p.ink,
+    onSurfaceVariant: p.muted,
+    outline: p.border,
+    outlineVariant: p.border,
   );
 
-  final fieldRadius = BorderRadius.circular(Radii.m);
-  final buttonRadius = BorderRadius.circular(Radii.m);
+  final controlRadius = BorderRadius.circular(Radii.control);
+  OutlineInputBorder line(Color c, [double w = 1]) => OutlineInputBorder(
+        borderRadius: controlRadius,
+        borderSide: BorderSide(color: c, width: w),
+      );
 
   return ThemeData(
     useMaterial3: true,
     brightness: brightness,
     colorScheme: scheme,
     scaffoldBackgroundColor: p.background,
-    splashFactory: InkSparkle.splashFactory,
+    splashFactory: InkRipple.splashFactory,
     extensions: [p],
     textTheme: TextTheme(
       headlineMedium: TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w900,
-        height: 1.15,
-        letterSpacing: -0.8,
-        color: p.ink,
-      ),
-      titleLarge: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w800,
-        height: 1.25,
+        fontSize: 28,
+        fontWeight: FontWeight.w500,
+        height: 1.2,
         letterSpacing: -0.4,
         color: p.ink,
       ),
+      titleLarge: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+        height: 1.3,
+        color: p.ink,
+      ),
       titleMedium: TextStyle(
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
         height: 1.3,
         color: p.ink,
       ),
       bodyLarge: TextStyle(fontSize: 16, height: 1.45, color: p.ink),
       bodyMedium: TextStyle(fontSize: 14, height: 1.45, color: p.muted),
-      labelLarge: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-      labelSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: p.muted),
+      labelLarge: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: p.faint),
     ),
     appBarTheme: AppBarTheme(
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: Colors.transparent,
+      backgroundColor: p.background,
       surfaceTintColor: Colors.transparent,
       foregroundColor: p.ink,
       titleTextStyle: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w800,
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
         color: p.ink,
-        letterSpacing: -0.4,
       ),
     ),
     cardTheme: CardThemeData(
       color: p.surface,
       surfaceTintColor: Colors.transparent,
-      shadowColor: p.shadow,
-      elevation: 3,
+      elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.xl),
+        borderRadius: BorderRadius.circular(Radii.card),
+        side: BorderSide(color: p.border),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: p.surface,
       labelStyle: TextStyle(color: p.muted),
-      floatingLabelStyle: TextStyle(
-        color: p.primary,
-        fontWeight: FontWeight.w600,
-      ),
-      prefixIconColor: p.muted,
-      border: OutlineInputBorder(
-        borderRadius: fieldRadius,
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: fieldRadius,
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: fieldRadius,
-        borderSide: BorderSide(color: p.primary, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: fieldRadius,
-        borderSide: BorderSide(color: p.accent),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: fieldRadius,
-        borderSide: BorderSide(color: p.accent, width: 1.5),
-      ),
+      floatingLabelStyle: TextStyle(color: p.primary),
+      hintStyle: TextStyle(color: p.faint),
+      prefixIconColor: p.faint,
+      border: line(p.border),
+      enabledBorder: line(p.border),
+      focusedBorder: line(p.primary, 1.5),
+      errorBorder: line(p.danger),
+      focusedErrorBorder: line(p.danger, 1.5),
       contentPadding: const EdgeInsets.symmetric(
         horizontal: Space.m,
-        vertical: 18,
+        vertical: Space.m,
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -119,59 +106,44 @@ ThemeData buildAppTheme({required bool dark}) {
         backgroundColor: p.primary,
         foregroundColor: p.onPrimary,
         disabledBackgroundColor: p.primary.withValues(alpha: 0.35),
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: Space.l),
-        shape: RoundedRectangleBorder(borderRadius: buttonRadius),
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        minimumSize: const Size(0, 48),
+        padding: const EdgeInsets.symmetric(horizontal: Space.l),
+        shape: RoundedRectangleBorder(borderRadius: controlRadius),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       ),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: p.primary,
-        foregroundColor: p.onPrimary,
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: Space.l),
-        shape: RoundedRectangleBorder(borderRadius: buttonRadius),
-        elevation: 0,
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: p.primary,
+        shape: RoundedRectangleBorder(borderRadius: controlRadius),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: p.primary,
       foregroundColor: p.onPrimary,
-      elevation: 4,
-      extendedTextStyle: const TextStyle(fontWeight: FontWeight.w700),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.l)),
+      elevation: 2,
+      highlightElevation: 2,
+      extendedTextStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.card)),
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: p.surface,
       surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.xxl)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.sheet)),
+      titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: p.ink),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: dark ? p.surface : p.ink,
-      contentTextStyle: TextStyle(color: dark ? p.ink : Colors.white),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.m)),
+      backgroundColor: dark ? p.raised : p.ink,
+      contentTextStyle: TextStyle(color: dark ? p.ink : p.surface),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.control)),
     ),
     chipTheme: ChipThemeData(
       side: BorderSide(color: p.border),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.s)),
     ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: p.primary),
     dividerColor: p.border,
   );
-}
-
-/// Cor associada a cada espécie (usada nos avatares e etiquetas).
-Color speciesColor(String species) {
-  switch (species) {
-    case 'Cão':
-      return const Color(0xFFF59E0B); // âmbar
-    case 'Gato':
-      return const Color(0xFF8F8BF0); // índigo claro
-    case 'Pássaro':
-      return const Color(0xFF13A393); // teal
-    case 'Coelho':
-      return const Color(0xFFEC4899); // rosa
-    default:
-      return const Color(0xFF8E90A8);
-  }
 }

@@ -21,46 +21,51 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: context.palette.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+        padding: const EdgeInsets.all(Space.xl),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: p.raised,
+                  borderRadius: BorderRadius.circular(Radii.card),
+                  border: Border.all(color: p.border),
+                ),
+                child: Icon(icon, size: 24, color: p.muted),
               ),
-              child: Icon(icon, size: 56, color: context.palette.primary),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: context.palette.ink,
-                fontWeight: FontWeight.w800,
+              const SizedBox(height: Space.m),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: p.ink,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: context.palette.muted, height: 1.4),
-            ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: onAction,
-                icon: const Icon(Icons.add_rounded),
-                label: Text(actionLabel!),
+              const SizedBox(height: Space.xs),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: p.muted, height: 1.45),
               ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(height: Space.l),
+                FilledButton.icon(
+                  onPressed: onAction,
+                  icon: const Icon(Icons.add, size: 18),
+                  label: Text(actionLabel!),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
